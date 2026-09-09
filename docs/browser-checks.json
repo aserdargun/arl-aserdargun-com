@@ -1,0 +1,101 @@
+{
+  "method": "Codex in-app browser, production Vite preview",
+  "date": "2026-09-09",
+  "scenarios": [
+    {
+      "id": "revenue",
+      "status": "Awaiting human approval",
+      "event": "39"
+    },
+    {
+      "id": "approve-once",
+      "status": "complete",
+      "writes": 1
+    },
+    {
+      "id": "injection",
+      "status": "Awaiting human approval",
+      "event": "50"
+    },
+    {
+      "id": "deny",
+      "status": "Action denied"
+    },
+    {
+      "id": "bad-evidence",
+      "status": "Evidence needs review",
+      "event": "35"
+    },
+    {
+      "id": "retry",
+      "status": "Awaiting human approval",
+      "event": "45"
+    },
+    {
+      "id": "timeout",
+      "status": "Execution stopped",
+      "event": "22"
+    },
+    {
+      "id": "calculation",
+      "status": "Evidence needs review",
+      "event": "35"
+    },
+    {
+      "id": "missing",
+      "status": "Evidence needs review",
+      "event": "35"
+    },
+    {
+      "id": "budget",
+      "status": "Execution stopped",
+      "event": "20"
+    },
+    {
+      "id": "revenue",
+      "status": "Awaiting human approval",
+      "event": "39"
+    }
+  ],
+  "viewports": [
+    {
+      "documentWidth": 305,
+      "overflow": false,
+      "width": 320
+    },
+    {
+      "documentWidth": 375,
+      "overflow": false,
+      "width": 390
+    },
+    {
+      "documentWidth": 753,
+      "overflow": false,
+      "width": 768
+    },
+    {
+      "documentWidth": 1425,
+      "overflow": false,
+      "width": 1440
+    }
+  ],
+  "consoleErrors": [],
+  "additionalChecks": [
+    "Play and Pause",
+    "Step and Rewind",
+    "Reset",
+    "Historical context",
+    "Lens synchronization",
+    "Arrow-key tab selection",
+    "Trace event payloads",
+    "Lesson navigation and Escape",
+    "Turkish mobile approval review and denial",
+    "Text topology",
+    "Selectable JSON export preview parsed from visible text"
+  ],
+  "limitations": [
+    "In-app browser did not expose native download completion",
+    "Three.js/Fiber Clock deprecation warning",
+    "No automated accessibility certification"
+  ]
+}
