@@ -1,0 +1,30 @@
+[
+  {
+    "id": "concept:agent-runtime",
+    "label": {
+      "en": "Agent runtime",
+      "tr": "Ajan çalışma sistemi"
+    }
+  },
+  {
+    "id": "concept:context-construction",
+    "label": {
+      "en": "Context construction",
+      "tr": "Bağlam oluşturma"
+    }
+  },
+  {
+    "id": "concept:authorization",
+    "label": {
+      "en": "Authorization",
+      "tr": "Yetkilendirme"
+    }
+  },
+  {
+    "id": "concept:evidence-evaluation",
+    "label": {
+      "en": "Evidence evaluation",
+      "tr": "Kanıt değerlendirme"
+    }
+  }
+]

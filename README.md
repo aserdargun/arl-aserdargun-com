@@ -49,3 +49,9 @@ V2 comparisons, branching, richer memory/least-privilege labs and trace imports 
 The public repository is `aserdargun/arl-aserdargun-com`. The `main` branch deploys through `.github/workflows/deploy-swa-arl-aserdargun-com.yml` to `swa-arl-aserdargun-com`, resource group `rg-arl-aserdargun-com`, in West Europe on the Free SKU under `aserdargun subscription 3`. The workflow uses immutable official action revisions and the prebuilt, verified `dist/` artifact; Azure does not generate a separate source workflow.
 
 `release.json` records the Git SHA and SHA-256 hashes of all deployed artifact files. `npm run verify:artifact` checks this manifest against the local build. Production releases are verified against GitHub Actions, Azure environment readiness, live manifest/asset hashes and browser behavior. Custom-domain and DNS configuration are not part of this workflow.
+
+## ILS compatibility
+
+The committed canonical ILS 0.1 archives in `vendor/` supply shared contracts, controls and inspectable provenance. The manifest describes the existing eight scenarios; Agent Runtime 101 is adapted directly from the twelve existing chapters. Evidence distinguishes simulated traces from calculated checks. Real-world verification and authority are never inferred from successful simulated execution.
+
+Use `?scenario=<existing-id>`, `?lesson=agent-runtime-101` and `?lang=en|tr` to open existing content. Unsupported `ils` payloads are ignored; no cross-lab runtime state or arbitrary return URL is accepted. Play/pause, step, rewind and reset retain their original callbacks, replay semantics and authority gates. `lab.manifest.json` is included before release hashes are generated. No ILS sibling checkout is required for installation or deployment.

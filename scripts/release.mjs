@@ -1,9 +1,10 @@
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { readdir, readFile, writeFile } from 'node:fs/promises';
+import { readdir, readFile, writeFile, copyFile } from 'node:fs/promises';
 import assert from 'node:assert/strict';
 const sha = process.env.GITHUB_SHA || execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
 assert.match(sha, /^[a-f0-9]{40}$/);
+if (process.argv[2] === 'write') await copyFile('lab.manifest.json', 'dist/lab.manifest.json');
 const files = (await readdir('dist', { recursive: true, withFileTypes: true }))
   .filter(entry => entry.isFile())
   .map(entry => `${entry.parentPath}/${entry.name}`.replace(/^dist\//, ''))
@@ -15,6 +16,7 @@ if (process.argv[2] === 'write') {
 const release = JSON.parse(await readFile('dist/release.json', 'utf8'));
 assert.equal(release.gitSha, sha);
 assert.deepEqual(release.assets, hashes);
+assert(files.includes('lab.manifest.json'));
 assert(files.includes('index.html') && files.includes('staticwebapp.config.json'));
 const html = await readFile('dist/index.html', 'utf8');
 for (const match of html.matchAll(/(?:src|href)="\/(assets\/[^\"]+)"/g)) assert(files.includes(match[1]), `Missing entry asset: ${match[1]}`);

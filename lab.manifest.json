@@ -1,0 +1,248 @@
+{
+  "schemaVersion": "0.1",
+  "id": "arl",
+  "code": "arl",
+  "name": "Agent Runtime Laboratory",
+  "canonicalUrl": "https://arl.aserdargun.com/",
+  "type": "interactive-lab",
+  "status": "live",
+  "tagline": {
+    "en": "See what happens between intent and action.",
+    "tr": "Niyet ile eylem arasında olanları gör."
+  },
+  "guidingQuestion": {
+    "en": "Why does a correct draft still require approval?",
+    "tr": "Doğru taslak neden hâlâ onay gerektirir?"
+  },
+  "concepts": [
+    "concept:agent-runtime",
+    "concept:context-construction",
+    "concept:authorization",
+    "concept:evidence-evaluation"
+  ],
+  "capabilities": {
+    "play": true,
+    "pause": true,
+    "step": true,
+    "reset": true,
+    "rewind": true,
+    "compare": false,
+    "guidedLesson": true,
+    "experiments": true,
+    "assumptions": true,
+    "evidence": true
+  },
+  "experiments": [
+    {
+      "id": "revenue",
+      "title": {
+        "en": "Revenue report",
+        "tr": "Gelir raporu"
+      },
+      "route": "/?scenario=revenue"
+    },
+    {
+      "id": "injection",
+      "title": {
+        "en": "Prompt injection",
+        "tr": "İstem enjeksiyonu"
+      },
+      "route": "/?scenario=injection"
+    },
+    {
+      "id": "bad-evidence",
+      "title": {
+        "en": "Bad evidence",
+        "tr": "Hatalı kanıt"
+      },
+      "route": "/?scenario=bad-evidence"
+    },
+    {
+      "id": "retry",
+      "title": {
+        "en": "Temporary tool failure",
+        "tr": "Geçici araç hatası"
+      },
+      "route": "/?scenario=retry"
+    },
+    {
+      "id": "timeout",
+      "title": {
+        "en": "Persistent timeout",
+        "tr": "Sürekli zaman aşımı"
+      },
+      "route": "/?scenario=timeout"
+    },
+    {
+      "id": "calculation",
+      "title": {
+        "en": "Wrong calculation",
+        "tr": "Yanlış hesaplama"
+      },
+      "route": "/?scenario=calculation"
+    },
+    {
+      "id": "missing",
+      "title": {
+        "en": "Missing evidence",
+        "tr": "Eksik kanıt"
+      },
+      "route": "/?scenario=missing"
+    },
+    {
+      "id": "budget",
+      "title": {
+        "en": "Budget exhausted",
+        "tr": "Bütçe tükendi"
+      },
+      "route": "/?scenario=budget"
+    }
+  ],
+  "lessons": [
+    {
+      "id": "agent-runtime-101",
+      "title": {
+        "en": "Agent Runtime 101",
+        "tr": "Ajan Çalışma Sistemi 101"
+      },
+      "route": "/?lesson=agent-runtime-101"
+    }
+  ],
+  "evidencePolicy": {
+    "summary": {
+      "en": "Scripted execution, calculated checks and simulated authority remain separate. None establishes real-world verification or universal agent safety.",
+      "tr": "Betikli yürütme, hesaplanmış kontroller ve simüle yetki ayrıdır. Hiçbiri gerçek dünya doğrulaması veya evrensel ajan güvenliği sağlamaz."
+    },
+    "allowedKinds": [
+      "simulated",
+      "calculated"
+    ]
+  },
+  "assumptions": [
+    {
+      "id": "scripted-agent",
+      "title": {
+        "en": "Scripted agent",
+        "tr": "Betikli ajan"
+      },
+      "description": {
+        "en": "Decisions and tools are deterministic educational scripts. No LLM, remote tools or real company documents are used.",
+        "tr": "Kararlar ve araçlar belirlenimci eğitim betikleridir. LLM, uzak araç veya gerçek şirket belgesi kullanılmaz."
+      }
+    },
+    {
+      "id": "simulated-authority",
+      "title": {
+        "en": "Authority inside the simulator",
+        "tr": "Simülatör içindeki yetki"
+      },
+      "description": {
+        "en": "Approval is bound to a synthetic run and exact draft. It changes only the simulated report and is not a production sandbox or universal security guarantee.",
+        "tr": "Onay sentetik yürütmeye ve tam taslağa bağlıdır. Yalnız simüle raporu değiştirir; üretim yalıtımı veya evrensel güvenlik garantisi değildir."
+      }
+    },
+    {
+      "id": "synthetic-units",
+      "title": {
+        "en": "Synthetic resource units",
+        "tr": "Sentetik kaynak birimleri"
+      },
+      "description": {
+        "en": "Clock, context capacity and budget units illustrate boundaries; they are not measured latency, token limits or currency.",
+        "tr": "Saat, bağlam kapasitesi ve bütçe birimleri sınırları açıklar; ölçülmüş gecikme, token sınırı veya para değildir."
+      }
+    }
+  ],
+  "evidence": [
+    {
+      "schemaVersion": "0.1",
+      "id": "execution",
+      "kind": "simulated",
+      "verificationStatus": "not-applicable",
+      "label": {
+        "en": "Execution and document fixtures",
+        "tr": "Yürütme ve belge örnekleri"
+      },
+      "notes": {
+        "en": "Event traces describe scripted runs over synthetic documents, not a live agent service.",
+        "tr": "Olay izleri sentetik belgelerdeki betikli yürütmeleri açıklar; canlı ajan servisi değildir."
+      },
+      "assumptionRefs": [
+        "scripted-agent",
+        "simulated-authority",
+        "synthetic-units"
+      ]
+    },
+    {
+      "schemaVersion": "0.1",
+      "id": "checks",
+      "kind": "calculated",
+      "verificationStatus": "not-applicable",
+      "label": {
+        "en": "Arithmetic and contract checks",
+        "tr": "Aritmetik ve sözleşme kontrolleri"
+      },
+      "notes": {
+        "en": "Arithmetic, evidence checks and task evaluation run separately. A passed simulator check does not verify real-world facts or confer authority.",
+        "tr": "Aritmetik, kanıt kontrolleri ve görev değerlendirmesi ayrı çalışır. Simülatörde geçen kontrol gerçek dünya olgusunu doğrulamaz veya yetki vermez."
+      },
+      "assumptionRefs": [
+        "scripted-agent",
+        "simulated-authority"
+      ],
+      "calculatedFrom": [
+        "execution"
+      ]
+    }
+  ],
+  "related": {
+    "theory": [
+      {
+        "id": "hns",
+        "label": {
+          "en": "Learn the theory · HNS",
+          "tr": "Kuramı öğren · HNS"
+        },
+        "url": "https://hns.aserdargun.com"
+      },
+      {
+        "id": "ctx",
+        "label": {
+          "en": "Learn the theory · CTX",
+          "tr": "Kuramı öğren · CTX"
+        },
+        "url": "https://ctx.aserdargun.com"
+      },
+      {
+        "id": "sec",
+        "label": {
+          "en": "Learn the theory · SEC",
+          "tr": "Kuramı öğren · SEC"
+        },
+        "url": "https://sec.aserdargun.com"
+      },
+      {
+        "id": "evl",
+        "label": {
+          "en": "Learn the theory · EVL",
+          "tr": "Kuramı öğren · EVL"
+        },
+        "url": "https://evl.aserdargun.com"
+      }
+    ],
+    "labs": [
+      {
+        "id": "tfl",
+        "label": {
+          "en": "Explore request execution · TFL",
+          "tr": "İstek yürütmesini keşfet · TFL"
+        },
+        "url": "https://tfl.aserdargun.com/",
+        "localizedUrls": {
+          "en": "https://tfl.aserdargun.com/?lang=en",
+          "tr": "https://tfl.aserdargun.com/?lang=tr"
+        }
+      }
+    ]
+  }
+}

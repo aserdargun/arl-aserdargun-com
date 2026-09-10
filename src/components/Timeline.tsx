@@ -1,3 +1,5 @@
+import { LabControlButton } from '@aserdargun/lab-ui';
+import { manifest } from '../ils/catalog';
 import { useState } from "react";
 import {
   Play,
@@ -52,7 +54,7 @@ export default function Timeline({
     >
       <div className="transport">
         <div className="button-row">
-          <button
+          <LabControlButton action={playing ? 'pause' : 'play'} capabilities={manifest.capabilities} locale={lang}
             className="primary"
             onClick={onPlay}
             disabled={stopped}
@@ -60,30 +62,30 @@ export default function Timeline({
           >
             {playing ? <Pause size={16} /> : <Play size={16} />}
             <span>{playing ? t("Pause", "Duraklat") : t("Play", "Oynat")}</span>
-          </button>
-          <button
+          </LabControlButton>
+          <LabControlButton action="step" capabilities={manifest.capabilities} locale={lang}
             onClick={onStep}
             disabled={stopped}
             aria-label={t("Step / next event", "Adım / sonraki olay")}
           >
             <StepForward size={17} />
             <span>{t("Step", "Adım")}</span>
-          </button>
-          <button
+          </LabControlButton>
+          <LabControlButton action="rewind" capabilities={manifest.capabilities} locale={lang}
             onClick={() => onSeek(Math.max(0, cursor - 1))}
             disabled={cursor === 0}
             aria-label={t("Rewind one event", "Bir olay geri sar")}
           >
             <SkipBack size={17} />
             <span>{t("Rewind", "Geri sar")}</span>
-          </button>
-          <button
+          </LabControlButton>
+          <LabControlButton action="reset" capabilities={manifest.capabilities} locale={lang}
             onClick={onReset}
             aria-label={t("Reset scenario", "Senaryoyu sıfırla")}
           >
             <RotateCcw size={16} />
             <span>{t("Reset", "Sıfırla")}</span>
-          </button>
+          </LabControlButton>
         </div>
         <div className="timeline-slider">
           <label htmlFor="event-cursor">

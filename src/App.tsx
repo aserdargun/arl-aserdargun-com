@@ -1,3 +1,6 @@
+import { LabShell } from '@aserdargun/lab-ui';
+import '@aserdargun/lab-ui/styles.css';
+import { manifest, experiments, initialRoute } from './ils/catalog';
 import { lazy, Suspense, useEffect, useState } from "react";
 import {
   Activity,
@@ -26,20 +29,22 @@ import Timeline from "./components/Timeline";
 import Dialog from "./components/Dialog";
 const RuntimeWorld = lazy(() => import("./visualization/RuntimeWorld"));
 const lensIcons = { hns: Boxes, ctx: Layers, sec: ShieldCheck, evl: Activity };
+const route=initialRoute(window.location.search);
 export default function App() {
   const [lang, setLang] = useState<Locale>(() => {
+    if (route.locale) return route.locale;
     try {
       return localStorage.getItem("arl.locale") === "tr" ? "tr" : "en";
     } catch {
       return "en";
     }
   });
-  const [playback, setPlayback] = useState(() => newPlayback());
+  const [playback, setPlayback] = useState(() => newPlayback(route.scenario));
   const [lens, setLens] = useState<Lens>("hns"),
     [playing, setPlaying] = useState(false),
     [modal, setModal] = useState<
       "review" | "learn" | "resources" | "inspect" | "export" | null
-    >(null),
+    >(route.lesson ? "learn" : null),
     [chapter, setChapter] = useState(0),
     [speed, setSpeed] = useState(350);
   const run = playback.history[playback.cursor],
@@ -354,6 +359,7 @@ export default function App() {
             <ChevronRight size={16} />
           </button>
         </section>
+        <LabShell manifest={manifest} experiment={experiments.find(e => e.id === scenario.id)!} locale={lang} />
         <footer>
           <span>
             {t(

@@ -1,0 +1,458 @@
+[
+  {
+    "schemaVersion": "0.1",
+    "id": "revenue",
+    "title": {
+      "en": "Revenue report",
+      "tr": "Gelir raporu"
+    },
+    "guidingQuestion": {
+      "en": "Why does a correct draft still require approval?",
+      "tr": "Doğru taslak neden hâlâ onay gerektirir?"
+    },
+    "description": {
+      "en": "Prepare a verified quarterly update. Stop before changing the report.",
+      "tr": "Doğrulanmış çeyrek güncellemesini hazırla. Raporu değiştirmeden dur."
+    },
+    "concepts": [
+      "concept:agent-runtime",
+      "concept:context-construction",
+      "concept:authorization",
+      "concept:evidence-evaluation"
+    ],
+    "learningObjectives": [
+      {
+        "en": "A correct draft still needs authority to become an action.",
+        "tr": "Doğru bir taslağın eyleme dönüşmesi için yine de yetki gerekir."
+      }
+    ],
+    "observations": [
+      {
+        "id": "boundary",
+        "label": {
+          "en": "Execution boundary",
+          "tr": "Yürütme sınırı"
+        },
+        "explanation": {
+          "en": "A correct draft still needs authority to become an action.",
+          "tr": "Doğru bir taslağın eyleme dönüşmesi için yine de yetki gerekir."
+        },
+        "evidenceRefs": [
+          "execution",
+          "checks"
+        ]
+      }
+    ],
+    "assumptionRefs": [
+      "scripted-agent",
+      "simulated-authority",
+      "synthetic-units"
+    ],
+    "evidenceRefs": [
+      "execution",
+      "checks"
+    ],
+    "config": {
+      "scenarioId": "revenue"
+    }
+  },
+  {
+    "schemaVersion": "0.1",
+    "id": "injection",
+    "title": {
+      "en": "Prompt injection",
+      "tr": "İstem enjeksiyonu"
+    },
+    "guidingQuestion": {
+      "en": "Can retrieved text grant authority to an agent?",
+      "tr": "Getirilen metin ajana yetki verebilir mi?"
+    },
+    "description": {
+      "en": "Retrieved notes request an unauthorized external send.",
+      "tr": "Getirilen notlar yetkisiz bir dış gönderim istiyor."
+    },
+    "concepts": [
+      "concept:agent-runtime",
+      "concept:context-construction",
+      "concept:authorization",
+      "concept:evidence-evaluation"
+    ],
+    "learningObjectives": [
+      {
+        "en": "Document instructions cannot grant permission. Multiple boundaries reduce risk; no universal defense is implied.",
+        "tr": "Belgedeki talimatlar izin veremez. Birden çok sınır riski azaltır; evrensel savunma iddiası yoktur."
+      }
+    ],
+    "observations": [
+      {
+        "id": "boundary",
+        "label": {
+          "en": "Execution boundary",
+          "tr": "Yürütme sınırı"
+        },
+        "explanation": {
+          "en": "Document instructions cannot grant permission. Multiple boundaries reduce risk; no universal defense is implied.",
+          "tr": "Belgedeki talimatlar izin veremez. Birden çok sınır riski azaltır; evrensel savunma iddiası yoktur."
+        },
+        "evidenceRefs": [
+          "execution",
+          "checks"
+        ]
+      }
+    ],
+    "assumptionRefs": [
+      "scripted-agent",
+      "simulated-authority",
+      "synthetic-units"
+    ],
+    "evidenceRefs": [
+      "execution",
+      "checks"
+    ],
+    "config": {
+      "scenarioId": "injection"
+    }
+  },
+  {
+    "schemaVersion": "0.1",
+    "id": "bad-evidence",
+    "title": {
+      "en": "Bad evidence",
+      "tr": "Hatalı kanıt"
+    },
+    "guidingQuestion": {
+      "en": "Can a successful tool return unsuitable evidence?",
+      "tr": "Başarılı araç uygun olmayan kanıt döndürebilir mi?"
+    },
+    "description": {
+      "en": "Search succeeds, but returns an outdated quarter as a candidate.",
+      "tr": "Arama başarılıdır; ancak aday olarak eski bir çeyrek döner."
+    },
+    "concepts": [
+      "concept:agent-runtime",
+      "concept:context-construction",
+      "concept:authorization",
+      "concept:evidence-evaluation"
+    ],
+    "learningObjectives": [
+      {
+        "en": "A successful tool call can still produce the wrong outcome.",
+        "tr": "Başarılı bir araç çağrısı yine de yanlış sonuca yol açabilir."
+      }
+    ],
+    "observations": [
+      {
+        "id": "boundary",
+        "label": {
+          "en": "Execution boundary",
+          "tr": "Yürütme sınırı"
+        },
+        "explanation": {
+          "en": "A successful tool call can still produce the wrong outcome.",
+          "tr": "Başarılı bir araç çağrısı yine de yanlış sonuca yol açabilir."
+        },
+        "evidenceRefs": [
+          "execution",
+          "checks"
+        ]
+      }
+    ],
+    "assumptionRefs": [
+      "scripted-agent",
+      "simulated-authority",
+      "synthetic-units"
+    ],
+    "evidenceRefs": [
+      "execution",
+      "checks"
+    ],
+    "config": {
+      "scenarioId": "bad-evidence"
+    }
+  },
+  {
+    "schemaVersion": "0.1",
+    "id": "retry",
+    "title": {
+      "en": "Temporary tool failure",
+      "tr": "Geçici araç hatası"
+    },
+    "guidingQuestion": {
+      "en": "When does retrying help a temporary failure?",
+      "tr": "Yeniden deneme geçici hatada ne zaman yardımcı olur?"
+    },
+    "description": {
+      "en": "The first read fails. A bounded retry recovers.",
+      "tr": "İlk okuma başarısız olur. Sınırlı yeniden deneme kurtarır."
+    },
+    "concepts": [
+      "concept:agent-runtime",
+      "concept:context-construction",
+      "concept:authorization",
+      "concept:evidence-evaluation"
+    ],
+    "learningObjectives": [
+      {
+        "en": "Retry an isolated read within a budget. Never blindly repeat consequential actions.",
+        "tr": "Yalıtılmış okumayı bütçe içinde yeniden dene. Sonuç doğuran eylemleri körlemesine tekrarlama."
+      }
+    ],
+    "observations": [
+      {
+        "id": "boundary",
+        "label": {
+          "en": "Execution boundary",
+          "tr": "Yürütme sınırı"
+        },
+        "explanation": {
+          "en": "Retry an isolated read within a budget. Never blindly repeat consequential actions.",
+          "tr": "Yalıtılmış okumayı bütçe içinde yeniden dene. Sonuç doğuran eylemleri körlemesine tekrarlama."
+        },
+        "evidenceRefs": [
+          "execution",
+          "checks"
+        ]
+      }
+    ],
+    "assumptionRefs": [
+      "scripted-agent",
+      "simulated-authority",
+      "synthetic-units"
+    ],
+    "evidenceRefs": [
+      "execution",
+      "checks"
+    ],
+    "config": {
+      "scenarioId": "retry"
+    }
+  },
+  {
+    "schemaVersion": "0.1",
+    "id": "timeout",
+    "title": {
+      "en": "Persistent timeout",
+      "tr": "Sürekli zaman aşımı"
+    },
+    "guidingQuestion": {
+      "en": "When should an execution stop retrying?",
+      "tr": "Yürütme ne zaman yeniden denemeyi bırakmalı?"
+    },
+    "description": {
+      "en": "Reads keep timing out. The harness stops after two retries.",
+      "tr": "Okumalar zaman aşımına uğrar. Koşum iki yeniden denemeden sonra durur."
+    },
+    "concepts": [
+      "concept:agent-runtime",
+      "concept:context-construction",
+      "concept:authorization",
+      "concept:evidence-evaluation"
+    ],
+    "learningObjectives": [
+      {
+        "en": "Stopping with an explicit failure is better than an unbounded retry loop.",
+        "tr": "Açık bir hatayla durmak, sınırsız yeniden deneme döngüsünden daha iyidir."
+      }
+    ],
+    "observations": [
+      {
+        "id": "boundary",
+        "label": {
+          "en": "Execution boundary",
+          "tr": "Yürütme sınırı"
+        },
+        "explanation": {
+          "en": "Stopping with an explicit failure is better than an unbounded retry loop.",
+          "tr": "Açık bir hatayla durmak, sınırsız yeniden deneme döngüsünden daha iyidir."
+        },
+        "evidenceRefs": [
+          "execution",
+          "checks"
+        ]
+      }
+    ],
+    "assumptionRefs": [
+      "scripted-agent",
+      "simulated-authority",
+      "synthetic-units"
+    ],
+    "evidenceRefs": [
+      "execution",
+      "checks"
+    ],
+    "config": {
+      "scenarioId": "timeout"
+    }
+  },
+  {
+    "schemaVersion": "0.1",
+    "id": "calculation",
+    "title": {
+      "en": "Wrong calculation",
+      "tr": "Yanlış hesaplama"
+    },
+    "guidingQuestion": {
+      "en": "How can arithmetic fail while tool execution succeeds?",
+      "tr": "Araç çalışırken aritmetik nasıl başarısız olabilir?"
+    },
+    "description": {
+      "en": "The calculator returns 20%. Independent verification expects 25%.",
+      "tr": "Hesaplayıcı %20 döndürür. Bağımsız doğrulama %25 bekler."
+    },
+    "concepts": [
+      "concept:agent-runtime",
+      "concept:context-construction",
+      "concept:authorization",
+      "concept:evidence-evaluation"
+    ],
+    "learningObjectives": [
+      {
+        "en": "A tool schema describes shape, not truth.",
+        "tr": "Araç şeması biçimi tanımlar, doğruluğu değil."
+      }
+    ],
+    "observations": [
+      {
+        "id": "boundary",
+        "label": {
+          "en": "Execution boundary",
+          "tr": "Yürütme sınırı"
+        },
+        "explanation": {
+          "en": "A tool schema describes shape, not truth.",
+          "tr": "Araç şeması biçimi tanımlar, doğruluğu değil."
+        },
+        "evidenceRefs": [
+          "execution",
+          "checks"
+        ]
+      }
+    ],
+    "assumptionRefs": [
+      "scripted-agent",
+      "simulated-authority",
+      "synthetic-units"
+    ],
+    "evidenceRefs": [
+      "execution",
+      "checks"
+    ],
+    "config": {
+      "scenarioId": "calculation"
+    }
+  },
+  {
+    "schemaVersion": "0.1",
+    "id": "missing",
+    "title": {
+      "en": "Missing evidence",
+      "tr": "Eksik kanıt"
+    },
+    "guidingQuestion": {
+      "en": "What remains unknown when required evidence is missing?",
+      "tr": "Gerekli kanıt eksikken ne bilinmez kalır?"
+    },
+    "description": {
+      "en": "The previous-quarter source is unavailable. No verified claim can be made.",
+      "tr": "Önceki çeyrek kaynağı yoktur. Doğrulanmış iddia üretilemez."
+    },
+    "concepts": [
+      "concept:agent-runtime",
+      "concept:context-construction",
+      "concept:authorization",
+      "concept:evidence-evaluation"
+    ],
+    "learningObjectives": [
+      {
+        "en": "Missing evidence stays missing. Plausibility is not verification.",
+        "tr": "Eksik kanıt eksik kalır. Makul görünmek doğrulama değildir."
+      }
+    ],
+    "observations": [
+      {
+        "id": "boundary",
+        "label": {
+          "en": "Execution boundary",
+          "tr": "Yürütme sınırı"
+        },
+        "explanation": {
+          "en": "Missing evidence stays missing. Plausibility is not verification.",
+          "tr": "Eksik kanıt eksik kalır. Makul görünmek doğrulama değildir."
+        },
+        "evidenceRefs": [
+          "execution",
+          "checks"
+        ]
+      }
+    ],
+    "assumptionRefs": [
+      "scripted-agent",
+      "simulated-authority",
+      "synthetic-units"
+    ],
+    "evidenceRefs": [
+      "execution",
+      "checks"
+    ],
+    "config": {
+      "scenarioId": "missing"
+    }
+  },
+  {
+    "schemaVersion": "0.1",
+    "id": "budget",
+    "title": {
+      "en": "Budget exhausted",
+      "tr": "Bütçe tükendi"
+    },
+    "guidingQuestion": {
+      "en": "How does a bounded budget stop an unfinished run?",
+      "tr": "Sınırlı bütçe bitmemiş yürütmeyi nasıl durdurur?"
+    },
+    "description": {
+      "en": "The execution budget expires before enough evidence is gathered.",
+      "tr": "Yeterli kanıt toplanmadan yürütme bütçesi biter."
+    },
+    "concepts": [
+      "concept:agent-runtime",
+      "concept:context-construction",
+      "concept:authorization",
+      "concept:evidence-evaluation"
+    ],
+    "learningObjectives": [
+      {
+        "en": "Bounded autonomy includes an explicit stopping rule.",
+        "tr": "Sınırlı özerklik açık bir durma kuralı içerir."
+      }
+    ],
+    "observations": [
+      {
+        "id": "boundary",
+        "label": {
+          "en": "Execution boundary",
+          "tr": "Yürütme sınırı"
+        },
+        "explanation": {
+          "en": "Bounded autonomy includes an explicit stopping rule.",
+          "tr": "Sınırlı özerklik açık bir durma kuralı içerir."
+        },
+        "evidenceRefs": [
+          "execution",
+          "checks"
+        ]
+      }
+    ],
+    "assumptionRefs": [
+      "scripted-agent",
+      "simulated-authority",
+      "synthetic-units"
+    ],
+    "evidenceRefs": [
+      "execution",
+      "checks"
+    ],
+    "config": {
+      "scenarioId": "budget"
+    }
+  }
+]
