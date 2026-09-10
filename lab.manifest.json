@@ -252,5 +252,23 @@
         }
       }
     ]
-  }
+  },
+  "relationships": [
+    {
+      "appId": "ctx",
+      "role": "shared-runtime-lab"
+    },
+    {
+      "appId": "hns",
+      "role": "shared-runtime-lab"
+    },
+    {
+      "appId": "sec",
+      "role": "shared-runtime-lab"
+    },
+    {
+      "appId": "evl",
+      "role": "shared-runtime-lab"
+    }
+  ]
 }

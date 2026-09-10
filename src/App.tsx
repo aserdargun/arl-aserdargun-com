@@ -1,3 +1,5 @@
+import { modelServingLink } from "./ils/handoff";
+import "./ils/handoff.css";
 import { LabShell } from "@aserdargun/lab-ui";
 import "@aserdargun/lab-ui/styles.css";
 import { manifest, experiments, initialRoute } from "./ils/catalog";
@@ -429,6 +431,11 @@ export default function App() {
             {t("Agent Runtime 101", "Ajan Çalışma Sistemi 101")}
             <ChevronRight size={16} />
           </button>
+        </section>
+        <section className="semantic-handoff">
+          <strong>{t("Agent → Serve", "Ajan → Sun")}</strong>
+          <p>{t("Inspect the latest model invocation as a fresh serving scenario. Only a short/long context class and normal priority are sent. Task text, documents, credentials and approvals remain here. ARL context units are not token counts.", "Son model çağrısını yeni bir sunum senaryosu olarak inceleyin. Yalnızca kısa/uzun bağlam sınıfı ve normal öncelik gönderilir. Görev metni, belgeler, kimlik bilgileri ve onaylar burada kalır. ARL bağlam birimleri token sayısı değildir.")}</p>
+          {modelServingLink(run,lang) ? <a data-testid="arl-to-tfl" href={modelServingLink(run,lang)!}>{t("Inspect model serving → TFL", "Model sunumunu incele → TFL")}</a> : <p>{t("Step through the runtime until a model invocation is recorded.", "Bir model çağrısı kaydedilene kadar çalışma zamanında adım ilerleyin.")}</p>}
         </section>
         <LabShell
           manifest={manifest}
