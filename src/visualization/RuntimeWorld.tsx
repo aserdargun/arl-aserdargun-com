@@ -1,10 +1,4 @@
-import {
-  Component,
-  Suspense,
-  useState,
-  useEffect,
-  type ReactNode,
-} from "react";
+import { memo, useEffect, useMemo } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
 import { Html, Line, OrbitControls } from "@react-three/drei";
 import type { AgentRun, Lens, Locale, Zone } from "../core/types";
@@ -51,27 +45,29 @@ function Box({
     </mesh>
   );
 }
-function Station({
+const Station = memo(function Station({
   zone,
-  run,
+  active,
+  visited,
+  awaitingApproval,
   lens,
   lang,
 }: {
   zone: Zone;
-  run: AgentRun;
+  active: boolean;
+  visited: boolean;
+  awaitingApproval: boolean;
   lens: Lens;
   lang: Locale;
 }) {
-  const active = run.zone === zone,
-    visited = run.events.some((e) => e.zone === zone),
-    accent =
-      zone === "approval"
-        ? "#c58a27"
-        : active
-          ? "#159f90"
-          : lensZones[lens].includes(zone)
-            ? "#304f70"
-            : "#8a9aae";
+  const accent =
+    zone === "approval"
+      ? "#c58a27"
+      : active
+        ? "#159f90"
+        : lensZones[lens].includes(zone)
+          ? "#304f70"
+          : "#8a9aae";
   return (
     <group position={positions[zone]}>
       <Box
@@ -158,7 +154,7 @@ function Station({
         <mesh position={[0, 1.43, 0]}>
           <octahedronGeometry args={[0.19]} />
           <meshStandardMaterial
-            color={run.status === "awaiting_approval" ? "#d59526" : "#15aa94"}
+            color={awaitingApproval ? "#d59526" : "#15aa94"}
           />
         </mesh>
       )}
@@ -180,7 +176,7 @@ function Station({
       </Html>
     </group>
   );
-}
+});
 function FitCamera() {
   const { camera, size, invalidate } = useThree();
   useEffect(() => {
@@ -190,6 +186,37 @@ function FitCamera() {
   }, [camera, size.width, size.height, invalidate]);
   return null;
 }
+const StaticPlatform = memo(function StaticPlatform() {
+  return (
+    <>
+      <Box p={[0, -0.22, 0]} s={[15, 0.28, 6.3]} color="#dae5ee" />
+      <gridHelper
+        scale={[0.93, 1, 0.38]}
+        args={[16, 32, "#c1d1dd", "#d0dde6"]}
+        position={[0, -0.065, 0]}
+      />
+      {route.slice(0, -1).map((z, i) => {
+        const a = positions[z],
+          b = positions[route[i + 1]];
+        return (
+          <Line
+            key={z}
+            points={[
+              [a[0], 0.14, a[2]],
+              [b[0], 0.14, a[2]],
+              [b[0], 0.14, b[2]],
+            ]}
+            color="#a5b9ca"
+            lineWidth={1.3}
+            dashed
+            dashSize={0.12}
+            gapSize={0.12}
+          />
+        );
+      })}
+    </>
+  );
+});
 function Scene({
   run,
   lens,
@@ -203,6 +230,16 @@ function Scene({
     .slice(0, -1)
     .reverse()
     .find((e) => e.zone !== run.zone)?.zone;
+  const transition = useMemo(
+    () =>
+      previous
+        ? ([
+            [positions[previous][0], 0.2, positions[previous][2]],
+            [positions[run.zone][0], 0.2, positions[run.zone][2]],
+          ] as [number, number, number][])
+        : null,
+    [previous, run.zone],
+  );
   return (
     <>
       <FitCamera />
@@ -210,40 +247,9 @@ function Scene({
       <ambientLight intensity={1.7} />
       <directionalLight position={[-3, 10, 5]} intensity={2.1} />
       <group position={[0, -0.1, 0]}>
-        <Box p={[0, -0.22, 0]} s={[15, 0.28, 6.3]} color="#dae5ee" />
-        <gridHelper
-          scale={[0.93, 1, 0.38]}
-          args={[16, 32, "#c1d1dd", "#d0dde6"]}
-          position={[0, -0.065, 0]}
-        />
-        {route.slice(0, -1).map((z, i) => {
-          const a = positions[z],
-            b = positions[route[i + 1]];
-          return (
-            <Line
-              key={z}
-              points={[
-                [a[0], 0.14, a[2]],
-                [b[0], 0.14, a[2]],
-                [b[0], 0.14, b[2]],
-              ]}
-              color="#a5b9ca"
-              lineWidth={1.3}
-              dashed
-              dashSize={0.12}
-              gapSize={0.12}
-            />
-          );
-        })}
-        {previous && (
-          <Line
-            points={[
-              [positions[previous][0], 0.2, positions[previous][2]],
-              [positions[run.zone][0], 0.2, positions[run.zone][2]],
-            ]}
-            color="#169e89"
-            lineWidth={3}
-          />
+        <StaticPlatform />
+        {transition && (
+          <Line points={transition} color="#169e89" lineWidth={3} />
         )}
 
         <Line
@@ -271,7 +277,15 @@ function Scene({
           </span>
         </Html>
         {route.map((z) => (
-          <Station key={z} zone={z} run={run} lens={lens} lang={lang} />
+          <Station
+            key={z}
+            zone={z}
+            active={run.zone === z}
+            visited={run.events.some((e) => e.zone === z)}
+            awaitingApproval={run.status === "awaiting_approval"}
+            lens={lens}
+            lang={lang}
+          />
         ))}
       </group>
       <OrbitControls
@@ -285,111 +299,20 @@ function Scene({
     </>
   );
 }
-class SceneBoundary extends Component<
-  { children: ReactNode; fallback: ReactNode },
-  { failed: boolean }
-> {
-  state = { failed: false };
-  static getDerivedStateFromError() {
-    return { failed: true };
-  }
-  render() {
-    return this.state.failed ? this.props.fallback : this.props.children;
-  }
-}
-function TextTopology({ run, lang }: { run: AgentRun; lang: Locale }) {
-  return (
-    <ol className="text-topology">
-      {route.map((z, i) => (
-        <li
-          className={run.zone === z ? "current" : ""}
-          key={z}
-          aria-current={run.zone === z ? "step" : undefined}
-        >
-          <span>{String(i + 1).padStart(2, "0")}</span>
-          {zoneNames[z][lang]}
-          {run.zone === z && (
-            <strong>{lang === "en" ? "Current" : "Şimdi"}</strong>
-          )}
-        </li>
-      ))}
-    </ol>
-  );
-}
 export default function RuntimeWorld(props: {
   run: AgentRun;
   lens: Lens;
   lang: Locale;
 }) {
-  const [flat, setFlat] = useState(false),
-    [camera, setCamera] = useState(0);
-  const fallback = <TextTopology run={props.run} lang={props.lang} />;
   return (
-    <>
-      <div className="world-tools">
-        <span>
-          {props.lang === "en"
-            ? "Runtime topology · educational geometry"
-            : "Çalışma topolojisi · eğitsel geometri"}
-        </span>
-        <div>
-          <button onClick={() => setFlat(!flat)}>
-            {flat ? "3D" : props.lang === "en" ? "Text view" : "Metin görünümü"}
-          </button>
-          {!flat && (
-            <button
-              onClick={() => setCamera((k) => k + 1)}
-              aria-label={
-                props.lang === "en" ? "Reset camera" : "Kamerayı sıfırla"
-              }
-            >
-              ↺
-            </button>
-          )}
-        </div>
-      </div>
-      <div
-        className="scene"
-        role={flat ? "region" : "img"}
-        aria-label={`${props.lang === "en" ? "Runtime topology. Current station" : "Çalışma topolojisi. Mevcut istasyon"}: ${zoneNames[props.run.zone][props.lang]}. ${props.lang === "en" ? "Use Text view for a readable equivalent." : "Okunabilir eşdeğeri için Metin görünümünü kullanın."}`}
-      >
-        {flat ? (
-          fallback
-        ) : (
-          <SceneBoundary fallback={fallback}>
-            <Suspense fallback={fallback}>
-              <Canvas
-                key={camera}
-                orthographic
-                camera={{ position: [4, 9, 18], zoom: 47 }}
-                dpr={[1, 1.5]}
-                frameloop="demand"
-                gl={{ antialias: true, alpha: false }}
-              >
-                <Scene {...props} />
-              </Canvas>
-            </Suspense>
-          </SceneBoundary>
-        )}
-      </div>
-      <div className="world-legend">
-        <span>
-          <i className="diamond" />
-          {props.lang === "en" ? "Current task state" : "Mevcut görev durumu"}
-        </span>
-        <span>
-          <i className="line" />
-          {props.lang === "en"
-            ? "Latest recorded transition"
-            : "Son kaydedilen geçiş"}
-        </span>
-        <span>
-          <i className="gate" />
-          {props.lang === "en"
-            ? "Human-governed boundary"
-            : "İnsan denetimindeki sınır"}
-        </span>
-      </div>
-    </>
+    <Canvas
+      orthographic
+      camera={{ position: [4, 9, 18], zoom: 47 }}
+      dpr={[1, 1.5]}
+      frameloop="demand"
+      gl={{ antialias: true, alpha: false }}
+    >
+      <Scene {...props} />
+    </Canvas>
   );
 }

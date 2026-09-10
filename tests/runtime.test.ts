@@ -251,3 +251,127 @@ it("the injection decision captures untrusted context before the blocked send", 
     r.toolCalls.find((c) => c.tool === "send_notification")!.selectedAt,
   );
 });
+
+describe("Review regressions: evidence and audit integrity", () => {
+  it.each(["value", "quarter", "callId"] as const)(
+    "rejects tampered evidence %s",
+    (field) => {
+      const r = runUntilStop();
+      if (field === "value") r.evidence[0].value = 999;
+      else r.evidence[0][field] = "forged";
+      expect(
+        verify(r, getScenario("revenue")).find((c) => c.id === "sourcesValid")
+          ?.status,
+      ).toBe("fail");
+    },
+  );
+  it("rechecks source evidence at the write boundary even after approval", () => {
+    let r = decideApproval(runUntilStop(), "approveOnce");
+    while (r.phase !== 4) r = advance(r);
+    r.evidence[0].revision = "changed-after-review";
+    r = advance(r);
+    expect(r.state.writeCount).toBe(0);
+    expect(r.status).toBe("failed");
+  });
+  it("never rewrites approval events when a grant is decided or consumed", () => {
+    const pending = runUntilStop();
+    const request = pending.events.find(
+      (e) => e.type === "APPROVAL_REQUESTED",
+    )!;
+    const approved = decideApproval(pending, "approveOnce");
+    const grant = approved.events.find((e) => e.type === "APPROVAL_GRANTED")!;
+    const complete = runUntilStop(approved);
+    expect(complete.events.find((e) => e.id === request.id)).toEqual(request);
+    expect(complete.events.find((e) => e.id === grant.id)).toEqual(grant);
+  });
+  it("rejects overflowed arithmetic instead of returning infinity", () => {
+    expect(growth(Number.MIN_VALUE, Number.MAX_VALUE)).toBeUndefined();
+  });
+  it("context overflow excludes evidence and stops before approval", () => {
+    const r = runUntilStop(createRun("overflow"));
+    expect(r.scenarioId).toBe("overflow");
+    expect(r.status).toBe("needs_review");
+    expect(
+      r.context.items.some((i) => i.kind === "RETRIEVAL" && !i.included),
+    ).toBe(true);
+    expect(r.approvals).toHaveLength(0);
+    expect(r.state.writeCount).toBe(0);
+  });
+  it("reassembling memory neither duplicates it nor retains it after opt out", () => {
+    const memory = [
+      { id: "memory-1", content: txt("Prior", "Önceki"), purpose: "format" },
+    ];
+    const first = assembleContext([], 100, 0, memory, true);
+    const next = assembleContext(first.items, 100, 1, memory, true);
+    expect(next.items).toHaveLength(1);
+    expect(next.used).toBe(8);
+    expect(
+      assembleContext(next.items, 100, 2, memory, false).items,
+    ).toHaveLength(0);
+  });
+});
+
+it("does not offer a fresh approval to repair an expired delegation", () => {
+  let r = decideApproval(runUntilStop(), "approveOnce");
+  r.delegatedAuthority.expiresAt = 0;
+  r = runUntilStop(r);
+  expect(r.status).toBe("failed");
+  expect(r.approvals).toHaveLength(1);
+  expect(r.state.writeCount).toBe(0);
+});
+it("expired pending approval stops explicitly without accepting it", () => {
+  const r = runUntilStop();
+  r.approvals[0].expiresAt = 0;
+  const next = decideApproval(r, "approveOnce");
+  expect(next.status).toBe("failed");
+  expect(next.approvals[0].decision).toBe("pending");
+  expect(next.events.at(-1)?.type).toBe("APPROVAL_INVALID");
+});
+it("changed tool input cannot use a grant for a different draft", () => {
+  const r = decideApproval(runUntilStop(), "approveOnce");
+  r.toolCalls.at(-1)!.input.draft = "substituted content";
+  expect(authorize(r, r.toolCalls.at(-1)!).decision).toBe("deny");
+});
+it("retry and injection preserve every previously recorded event", () => {
+  for (const id of ["revenue", "retry", "injection"]) {
+    let r = createRun(id);
+    for (let i = 0; i < 100; i++) {
+      const next = advance(r);
+      expect(next.events.slice(0, r.events.length)).toEqual(r.events);
+      if (r === next) break;
+      r = next;
+    }
+  }
+});
+
+it("rechecks read permission before returning protected content", () => {
+  let r = createRun();
+  while (!(r.phase === 4 && r.toolCalls.at(-1)?.tool === "read_document"))
+    r = advance(r);
+  r.delegatedAuthority.permissions[0].expiresAt = 0;
+  r = advance(r);
+  expect(r.status).toBe("failed");
+  expect(r.evidence).toHaveLength(0);
+  expect(r.toolCalls.at(-1)?.status).toBe("denied");
+  expect(r.pendingRetry).toBe(false);
+});
+it("a new retry clears the previous output while retaining the failure event", () => {
+  let r = createRun("retry");
+  while (!r.pendingRetry) r = advance(r);
+  const failure = r.events.at(-1)!;
+  r = advance(advance(r));
+  expect(r.toolCalls.at(-1)?.status).toBe("running");
+  expect(r.toolCalls.at(-1)?.output).toBeUndefined();
+  expect(r.toolCalls.at(-1)?.completedAt).toBeUndefined();
+  expect(r.events.find((e) => e.id === failure.id)).toEqual(failure);
+});
+it("model extraction uses its captured context even if live assembly changes", () => {
+  let r = createRun();
+  while (
+    !(r.events.at(-1)?.type === "MODEL_CALL_STARTED" && r.evidence.length === 2)
+  )
+    r = advance(r);
+  r.context.items = r.context.items.map((i) => ({ ...i, included: false }));
+  r = advance(r);
+  expect(r.state.values).toHaveLength(2);
+});

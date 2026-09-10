@@ -6,6 +6,8 @@ The run includes identity, delegated authority, context, memory, workflow state,
 
 Snapshots are the authoritative post-event states. Snapshot 0 is ready; snapshot N contains event N. Event timestamps mark the end of an educational operation. Operation start timestamps may precede that endpoint. Backoff is 500 synthetic milliseconds; default recorded operations are 100 synthetic milliseconds. These are not empirical model/tool latencies.
 
+Event payloads are copied when recorded. A pending approval event stays pending in the trace even after the live grant is approved and consumed.
+
 Playback is not event re-execution. Rewinding and stepping through known snapshots cannot grant authority or repeat a side effect. The current UI perspective and selected cursor are separate from the live run.
 
 No trace importer or external SDK adapter is included. Future import must validate schema/version, preserve unknown evidence and source clocks, distinguish observed traces from simulations, and disable consequential execution of imported history. Raw trace content must never become application instructions. The current export is a diagnostic educational record, not a signed or tamper-proof audit artifact.

@@ -11,7 +11,7 @@ export function assembleContext(
   memory: MemoryItem[] = [],
   includeMemory = false,
 ): ContextSnapshot {
-  const all = [...items];
+  const all = items.filter((item) => item.kind !== "MEMORY");
   if (includeMemory)
     all.push(
       ...memory.map((m) => ({

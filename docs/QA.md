@@ -4,7 +4,7 @@ Verified locally on 2026-09-09. This is a local implementation acceptance record
 
 ## Automated verification
 
-`npm run check` passes: **30 tests across two files**, TypeScript checking, and the Vite production build. Tests cover the A–D vertical slice, exact authority scope, grant expiry/reuse, changed drafts, missing contracts, injection boundaries, context selection/provenance/memory policy, independent arithmetic and citation checks, retry bounds, budget exhaustion, deterministic reset and replay without repeated effects.
+`npm run check` passes: **47 tests across three files**, TypeScript checking, and the Vite production build. Tests cover the A–D vertical slice, exact authority scope, grant expiry/reuse, changed drafts, missing contracts, injection boundaries, context selection/provenance/memory policy, independent arithmetic and citation checks, retry bounds, budget exhaustion, deterministic reset and replay without repeated effects.
 
 ## Browser acceptance
 
@@ -40,7 +40,7 @@ The in-app browser did not expose a completed native download event. To keep exp
 - **Education:** model abstraction, synthetic units/time/data, context/memory/state and verification/evaluation/observability distinctions are visible. Governance patterns are described with limitations.
 - **Interaction:** mobile uses a bottom sheet, the topology fits the viewport, and review/deny controls stay outside the inspector's scrolling body. 3D routes distinguish conceptual connections from the latest actual event transition.
 
-High-impact findings above were fixed and retested. V2 comparisons, branch-from-event, interactive overflow, richer least-privilege/memory scenarios, trace import and platform adapters remain explicitly deferred.
+High-impact findings above were fixed and retested. V2 comparisons, branch-from-event, richer least-privilege/memory scenarios, trace import and platform adapters remain explicitly deferred.
 
 ## CORE checklist
 

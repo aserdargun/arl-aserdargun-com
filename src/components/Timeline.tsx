@@ -1,5 +1,5 @@
-import { LabControlButton } from '@aserdargun/lab-ui';
-import { manifest } from '../ils/catalog';
+import { LabControlButton } from "@aserdargun/lab-ui";
+import { manifest } from "../ils/catalog";
 import { useState } from "react";
 import {
   Play,
@@ -54,7 +54,10 @@ export default function Timeline({
     >
       <div className="transport">
         <div className="button-row">
-          <LabControlButton action={playing ? 'pause' : 'play'} capabilities={manifest.capabilities} locale={lang}
+          <LabControlButton
+            action={playing ? "pause" : "play"}
+            capabilities={manifest.capabilities}
+            locale={lang}
             className="primary"
             onClick={onPlay}
             disabled={stopped}
@@ -63,7 +66,10 @@ export default function Timeline({
             {playing ? <Pause size={16} /> : <Play size={16} />}
             <span>{playing ? t("Pause", "Duraklat") : t("Play", "Oynat")}</span>
           </LabControlButton>
-          <LabControlButton action="step" capabilities={manifest.capabilities} locale={lang}
+          <LabControlButton
+            action="step"
+            capabilities={manifest.capabilities}
+            locale={lang}
             onClick={onStep}
             disabled={stopped}
             aria-label={t("Step / next event", "Adım / sonraki olay")}
@@ -71,7 +77,10 @@ export default function Timeline({
             <StepForward size={17} />
             <span>{t("Step", "Adım")}</span>
           </LabControlButton>
-          <LabControlButton action="rewind" capabilities={manifest.capabilities} locale={lang}
+          <LabControlButton
+            action="rewind"
+            capabilities={manifest.capabilities}
+            locale={lang}
             onClick={() => onSeek(Math.max(0, cursor - 1))}
             disabled={cursor === 0}
             aria-label={t("Rewind one event", "Bir olay geri sar")}
@@ -79,7 +88,10 @@ export default function Timeline({
             <SkipBack size={17} />
             <span>{t("Rewind", "Geri sar")}</span>
           </LabControlButton>
-          <LabControlButton action="reset" capabilities={manifest.capabilities} locale={lang}
+          <LabControlButton
+            action="reset"
+            capabilities={manifest.capabilities}
+            locale={lang}
             onClick={onReset}
             aria-label={t("Reset scenario", "Senaryoyu sıfırla")}
           >
@@ -175,6 +187,18 @@ export default function Timeline({
           </div>
           <div className="trace-layout">
             <ol className="trace-list">
+              {!history
+                .at(-1)!
+                .events.some(
+                  (e) => filter === "all" || e.type.includes(filter),
+                ) && (
+                <li className="empty">
+                  {t(
+                    "No recorded events match this filter yet.",
+                    "Henüz bu filtreyle eşleşen kayıtlı olay yok.",
+                  )}
+                </li>
+              )}
               {history
                 .at(-1)!
                 .events.filter(

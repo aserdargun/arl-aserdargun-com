@@ -400,6 +400,63 @@
   },
   {
     "schemaVersion": "0.1",
+    "id": "overflow",
+    "title": {
+      "en": "Context overflow",
+      "tr": "Bağlam taşması"
+    },
+    "guidingQuestion": {
+      "en": "What happens when retrieved evidence does not fit in the model context?",
+      "tr": "Getirilen kanıt model bağlamına sığmadığında ne olur?"
+    },
+    "description": {
+      "en": "Both sources are retrieved, but only one fits alongside the policy. Inspect CTX exclusions.",
+      "tr": "İki kaynak da getirilir; politika yanında yalnızca biri sığar. CTX içinde hariç tutulanları inceleyin."
+    },
+    "concepts": [
+      "concept:agent-runtime",
+      "concept:context-construction",
+      "concept:authorization",
+      "concept:evidence-evaluation"
+    ],
+    "learningObjectives": [
+      {
+        "en": "Retrieved is not the same as included. Missing model context must not become a verified claim.",
+        "tr": "Getirilmiş olmak, bağlama dahil olmak değildir. Eksik model bağlamı doğrulanmış iddiaya dönüşmemeli."
+      }
+    ],
+    "observations": [
+      {
+        "id": "boundary",
+        "label": {
+          "en": "Execution boundary",
+          "tr": "Yürütme sınırı"
+        },
+        "explanation": {
+          "en": "Retrieved is not the same as included. Missing model context must not become a verified claim.",
+          "tr": "Getirilmiş olmak, bağlama dahil olmak değildir. Eksik model bağlamı doğrulanmış iddiaya dönüşmemeli."
+        },
+        "evidenceRefs": [
+          "execution",
+          "checks"
+        ]
+      }
+    ],
+    "assumptionRefs": [
+      "scripted-agent",
+      "simulated-authority",
+      "synthetic-units"
+    ],
+    "evidenceRefs": [
+      "execution",
+      "checks"
+    ],
+    "config": {
+      "scenarioId": "overflow"
+    }
+  },
+  {
+    "schemaVersion": "0.1",
     "id": "budget",
     "title": {
       "en": "Budget exhausted",

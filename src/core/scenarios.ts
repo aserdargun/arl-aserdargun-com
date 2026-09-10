@@ -165,6 +165,21 @@ export const scenarios: ScenarioDefinition[] = [
   },
   {
     ...base,
+    id: "overflow",
+    fault: "overflow",
+    contextCapacity: 54,
+    title: txt("Context overflow", "Bağlam taşması"),
+    description: txt(
+      "Both sources are retrieved, but only one fits alongside the policy. Inspect CTX exclusions.",
+      "İki kaynak da getirilir; politika yanında yalnızca biri sığar. CTX içinde hariç tutulanları inceleyin.",
+    ),
+    lesson: txt(
+      "Retrieved is not the same as included. Missing model context must not become a verified claim.",
+      "Getirilmiş olmak, bağlama dahil olmak değildir. Eksik model bağlamı doğrulanmış iddiaya dönüşmemeli.",
+    ),
+  },
+  {
+    ...base,
     id: "budget",
     fault: "budget",
     budget: 3,
@@ -190,7 +205,11 @@ export const tools: Record<ToolDefinition["id"], ToolDefinition> = {
     id: "search_documents",
     description: txt("Find candidate documents", "Aday belgeleri bul"),
     inputSchema: { query: "string" },
-    outputSchema: { candidates: "document IDs[]" },
+    outputSchema: {
+      candidates: "document IDs[]",
+      selected: "document IDs[]",
+      policy: "string",
+    },
     permission: "documents:read",
     resource: "documents",
     risk: txt("Read synthetic metadata", "Sentetik üst veriyi oku"),
@@ -201,7 +220,10 @@ export const tools: Record<ToolDefinition["id"], ToolDefinition> = {
     id: "read_document",
     description: txt("Read selected source", "Seçilen kaynağı oku"),
     inputSchema: { documentId: "string" },
-    outputSchema: { document: "Document" },
+    outputSchema: {
+      result:
+        "Document | { found: false, documentId: string, warning: string } | { error: string }",
+    },
     permission: "documents:read",
     resource: "documents",
     risk: txt("Read synthetic content", "Sentetik içeriği oku"),
@@ -211,7 +233,10 @@ export const tools: Record<ToolDefinition["id"], ToolDefinition> = {
   calculator: {
     id: "calculator",
     description: txt("Calculate percentage change", "Yüzde değişimini hesapla"),
-    inputSchema: { previous: "number", latest: "number" },
+    inputSchema: {
+      previous: "number | undefined",
+      latest: "number | undefined",
+    },
     outputSchema: { growth: "number | null" },
     permission: "calculator:execute",
     resource: "calculator",
@@ -222,7 +247,7 @@ export const tools: Record<ToolDefinition["id"], ToolDefinition> = {
   draft_report: {
     id: "draft_report",
     description: txt("Prepare an isolated draft", "Yalıtılmış taslak hazırla"),
-    inputSchema: { growth: "number", evidence: "IDs[]" },
+    inputSchema: { growth: "number | undefined", evidence: "IDs[]" },
     outputSchema: { draft: "string" },
     permission: "report:draft",
     resource: "draft",

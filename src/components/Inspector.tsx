@@ -121,7 +121,11 @@ export default function Inspector({
                 </strong>
                 <span>{t("synthetic units", "sentetik birim")}</span>
               </div>
-              <meter value={run.budget.used} max={run.budget.limit} />
+              <meter
+                aria-label={t("Execution budget", "Yürütme bütçesi")}
+                value={run.budget.used}
+                max={run.budget.limit}
+              />
               <p>
                 {t(
                   "1 unit per model call or tool attempt. No currency pricing.",
@@ -188,7 +192,11 @@ export default function Inspector({
                 </strong>
                 <span>{t("synthetic capacity", "sentetik kapasite")}</span>
               </div>
-              <meter value={run.context.used} max={run.context.capacity} />
+              <meter
+                aria-label={t("Context capacity", "Bağlam kapasitesi")}
+                value={run.context.used}
+                max={run.context.capacity}
+              />
               <p>
                 {run.context.capacity - run.context.used}{" "}
                 {t("available", "kullanılabilir")} ·{" "}
@@ -235,10 +243,16 @@ export default function Inspector({
               <p>{meta.lesson[lang]}</p>
               <Field name={t("MEMORY", "BELLEK")}>
                 {run.memory.length}{" "}
-                {t(
-                  "persisted items. Policy does not insert memory.",
-                  "kalıcı öğe. Politika belleği dahil etmiyor.",
-                )}
+                {t("run-local memory items.", "yürütmeye ait bellek öğesi.")}{" "}
+                {run.policy.includeMemory
+                  ? t(
+                      "Policy permits insertion within capacity.",
+                      "Politika kapasite içinde eklemeye izin veriyor.",
+                    )
+                  : t(
+                      "Policy does not insert memory.",
+                      "Politika belleği dahil etmiyor.",
+                    )}
               </Field>
               <Field name={t("STATE", "DURUM")}>
                 {zoneNames[run.zone][lang]} / {statuses[run.status][lang]}
@@ -420,40 +434,36 @@ export default function Inspector({
           </details>
         )}
       </div>
-            {lens === "sec" && run.status === "awaiting_approval" && (
-              <div className="approval-inline">
-                <strong>
-                  <AlertTriangle size={17} />
-                  {t("Human approval required", "İnsan onayı gerekli")}
-                </strong>
-                <p>
-                  {t(
-                    "A verified draft is ready. Review the exact action before granting one use.",
-                    "Doğrulanmış taslak hazır. Tek kullanımlık izin vermeden tam eylemi incele.",
-                  )}
-                </p>
-                <div className="button-row">
-                  <button
-                    className="primary"
-                    onClick={onReview}
-                    disabled={!isLive}
-                  >
-                    {t("Review action", "Eylemi incele")}
-                  </button>
-                  <button onClick={onDeny} disabled={!isLive}>
-                    {t("Deny", "Reddet")}
-                  </button>
-                </div>
-                {!isLive && (
-                  <p>
-                    {t(
-                      "Historical snapshot. Return to latest to act.",
-                      "Geçmiş anlık görüntü. Eylem için son olaya dön.",
-                    )}
-                  </p>
-                )}
-              </div>
+      {lens === "sec" && run.status === "awaiting_approval" && (
+        <div className="approval-inline">
+          <strong>
+            <AlertTriangle size={17} />
+            {t("Human approval required", "İnsan onayı gerekli")}
+          </strong>
+          <p>
+            {t(
+              "A verified draft is ready. Review the exact action before granting one use.",
+              "Doğrulanmış taslak hazır. Tek kullanımlık izin vermeden tam eylemi incele.",
             )}
+          </p>
+          <div className="button-row">
+            <button className="primary" onClick={onReview} disabled={!isLive}>
+              {t("Review action", "Eylemi incele")}
+            </button>
+            <button onClick={onDeny} disabled={!isLive}>
+              {t("Deny", "Reddet")}
+            </button>
+          </div>
+          {!isLive && (
+            <p>
+              {t(
+                "Historical snapshot. Return to latest to act.",
+                "Geçmiş anlık görüntü. Eylem için son olaya dön.",
+              )}
+            </p>
+          )}
+        </div>
+      )}
       <a
         className="theory-link"
         href={meta.url}

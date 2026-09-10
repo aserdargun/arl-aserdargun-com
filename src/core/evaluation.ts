@@ -4,10 +4,12 @@ import {
   type ScenarioDefinition,
   type VerificationCheck,
 } from "./types";
-export const growth = (previous: number, latest: number): number | undefined =>
-  Number.isFinite(previous) && Number.isFinite(latest) && previous !== 0
-    ? ((latest - previous) / previous) * 100
-    : undefined;
+export function growth(previous: number, latest: number): number | undefined {
+  if (!Number.isFinite(previous) || !Number.isFinite(latest) || previous === 0)
+    return undefined;
+  const percent = ((latest - previous) / previous) * 100;
+  return Number.isFinite(percent) ? percent : undefined;
+}
 export function verify(
   run: AgentRun,
   s: ScenarioDefinition,
@@ -57,13 +59,25 @@ export function verify(
       "sourcesValid",
       "Sources exist and revisions match",
       "Kaynaklar mevcut ve sürümler eşleşiyor",
-      ev.length >= 2 &&
+      ev.length === 2 &&
+        new Set(ev.map((e) => e.id)).size === 2 &&
+        new Set(ev.map((e) => e.documentId)).size === 2 &&
         ev.every((e) =>
           s.documents.some(
             (d) =>
               d.id === e.documentId &&
               d.revision === e.revision &&
-              d.trust === "source",
+              d.trust === "source" &&
+              d.quarter === e.quarter &&
+              d.revenue === e.value &&
+              Number.isFinite(e.value) &&
+              run.toolCalls.some(
+                (c) =>
+                  c.id === e.callId &&
+                  c.tool === "read_document" &&
+                  c.status === "succeeded" &&
+                  c.input.documentId === e.documentId,
+              ),
           ),
         ),
       txt(
@@ -80,6 +94,8 @@ export function verify(
           const e = ev.find((e) => e.id === v.evidenceId);
           return (
             !!e &&
+            e.quarter === v.quarter &&
+            e.value === v.value &&
             s.documents.some(
               (d) =>
                 d.id === e.documentId &&

@@ -98,7 +98,7 @@ function event(
     title,
     detail,
     parentId,
-    data,
+    data: structuredClone(data),
   };
   r.events.push(e);
   if (["complete", "failed", "needs_review", "denied"].includes(r.status))
@@ -497,7 +497,7 @@ export function advance(input: AgentRun): AgentRun {
     if (step.id === "decide-values")
       r.state.values = r.evidence
         .filter((e) =>
-          r.context.items.some((i) => i.id === e.documentId && i.included),
+          m.context.items.some((i) => i.id === e.documentId && i.included),
         )
         .map((e) => ({
           quarter:
@@ -655,6 +655,26 @@ export function advance(input: AgentRun): AgentRun {
   }
   if (r.phase === 5) {
     if (tool.id === "write_report") {
+      if (
+        !verify(r, s).every((c) => c.status === "pass") ||
+        r.delegatedAuthority.subject !== r.identity.id ||
+        r.delegatedAuthority.purpose !== "quarterly-revenue-update" ||
+        r.budget.elapsedMs >= r.delegatedAuthority.expiresAt ||
+        call.input.draft !== r.state.draft ||
+        r.state.writeCount !== 0 ||
+        r.approvals.some((a) => a.decision !== "pending")
+      ) {
+        r.status = "failed";
+        return event(
+          r,
+          "RUN_FAILED",
+          "authority",
+          txt(
+            "Write contract changed. Reset before requesting new authority.",
+            "Yazma sözleşmesi değişti. Yeni yetki istemeden önce sıfırlayın.",
+          ),
+        );
+      }
       const request = {
         id: `${r.id}/approval-${r.approvals.length + 1}`,
         runId: r.id,
@@ -735,6 +755,7 @@ export function advance(input: AgentRun): AgentRun {
     const auth = authorize(r, call);
     if (auth.decision === "deny") {
       r.decisions.push(auth);
+      call.status = "denied";
       r.status = "failed";
       return event(
         r,
@@ -760,6 +781,8 @@ export function advance(input: AgentRun): AgentRun {
     r.budget.used++;
     r.budget.toolCalls++;
     call.status = "running";
+    call.output = undefined;
+    call.completedAt = undefined;
     call.startedAt = r.budget.elapsedMs;
     r.phase = 4;
     return event(
@@ -773,6 +796,22 @@ export function advance(input: AgentRun): AgentRun {
       tool.risk,
       call.id,
       call.input,
+    );
+  }
+  const finalAuthority = authorize(r, call);
+  if (finalAuthority.decision === "deny") {
+    r.decisions.push(finalAuthority);
+    call.status = "denied";
+    call.completedAt = r.budget.elapsedMs + 100;
+    r.status = "failed";
+    return event(
+      r,
+      "AUTHORIZATION_DENIED",
+      "authority",
+      finalAuthority.reason,
+      finalAuthority.reason,
+      call.id,
+      finalAuthority,
     );
   }
   const outcome = result(r, call);
@@ -823,7 +862,25 @@ export function decideApproval(
   if (input.status !== "awaiting_approval") return input;
   const r = structuredClone(input),
     a = r.approvals.at(-1)!;
-  if (a.decision !== "pending") return input;
+  if (!a || a.decision !== "pending") return input;
+  if (
+    decision === "approveOnce" &&
+    (a.runId !== r.id ||
+      a.resource !== tools.write_report.resource ||
+      a.draft !== r.state.draft ||
+      r.budget.elapsedMs >= a.expiresAt)
+  ) {
+    r.status = "failed";
+    return event(
+      r,
+      "APPROVAL_INVALID",
+      "approval",
+      txt(
+        "Approval expired or no longer matches this action. Reset the run.",
+        "Onayın süresi doldu veya bu eylemle artık eşleşmiyor. Yürütmeyi sıfırlayın.",
+      ),
+    );
+  }
   a.decision = decision;
   if (decision === "deny") {
     r.status = "denied";

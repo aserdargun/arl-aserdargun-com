@@ -1,7 +1,7 @@
-import { LabShell } from '@aserdargun/lab-ui';
-import '@aserdargun/lab-ui/styles.css';
-import { manifest, experiments, initialRoute } from './ils/catalog';
-import { lazy, Suspense, useEffect, useState } from "react";
+import { LabShell } from "@aserdargun/lab-ui";
+import "@aserdargun/lab-ui/styles.css";
+import { manifest, experiments, initialRoute } from "./ils/catalog";
+import { useEffect, useMemo, useState } from "react";
 import {
   Activity,
   ArrowUpRight,
@@ -27,9 +27,9 @@ import type { Lens, Locale } from "./core/types";
 import Inspector, { CheckList } from "./components/Inspector";
 import Timeline from "./components/Timeline";
 import Dialog from "./components/Dialog";
-const RuntimeWorld = lazy(() => import("./visualization/RuntimeWorld"));
+import RuntimeView from "./components/RuntimeView";
 const lensIcons = { hns: Boxes, ctx: Layers, sec: ShieldCheck, evl: Activity };
-const route=initialRoute(window.location.search);
+const route = initialRoute(window.location.search);
 export default function App() {
   const [lang, setLang] = useState<Locale>(() => {
     if (route.locale) return route.locale;
@@ -58,13 +58,16 @@ export default function App() {
     } catch {}
   }, [lang]);
   useEffect(() => {
-    if (!playing) return;
+    if (!playing || modal !== null) return;
     const id = window.setInterval(
       () => setPlayback((p) => stepPlayback(p)),
       speed,
     );
     return () => clearInterval(id);
-  }, [playing, speed]);
+  }, [playing, speed, modal]);
+  useEffect(() => {
+    if (modal !== null) setPlaying(false);
+  }, [modal]);
   useEffect(() => {
     if (
       isLive &&
@@ -84,6 +87,14 @@ export default function App() {
     if (isLive && run.events.at(-1)?.type === "EVALUATION_FAILED")
       setLens("evl");
   }, [playback.cursor, isLive, run.events]);
+  const chapterEvent = playback.history.findIndex(
+    (r) => r.events.at(-1)?.zone === chapters[chapter].zone,
+  );
+  const traceJSON = useMemo(
+    () =>
+      modal === "export" ? JSON.stringify(exportTrace(playback), null, 2) : "",
+    [modal, playback],
+  );
   function seek(index: number) {
     setPlaying(false);
     setPlayback((p) => ({
@@ -102,7 +113,7 @@ export default function App() {
     if (decision === "approveOnce") setPlaying(true);
   }
   function exportRun() {
-    const blob = new Blob([JSON.stringify(exportTrace(playback), null, 2)], {
+    const blob = new Blob([traceJSON], {
         type: "application/json",
       }),
       url = URL.createObjectURL(blob),
@@ -220,11 +231,16 @@ export default function App() {
             role="tablist"
             aria-label={t("Engineering lens", "Mühendislik merceği")}
             onKeyDown={(e) => {
-              if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+              if (["ArrowRight", "ArrowLeft", "Home", "End"].includes(e.key)) {
                 e.preventDefault();
                 const ids = Object.keys(lenses) as Lens[],
                   i = ids.indexOf(lens),
-                  n = (i + (e.key === "ArrowRight" ? 1 : 3)) % 4;
+                  n =
+                    e.key === "Home"
+                      ? 0
+                      : e.key === "End"
+                        ? 3
+                        : (i + (e.key === "ArrowRight" ? 1 : 3)) % 4;
                 setLens(ids[n]);
                 document.getElementById(`lens-${ids[n]}`)?.focus();
               }
@@ -236,7 +252,7 @@ export default function App() {
                 <button
                   id={`lens-${id}`}
                   role="tab"
-                  aria-controls="lens-panel"
+                  aria-controls="runtime-panel"
                   aria-selected={lens === id}
                   tabIndex={lens === id ? 0 : -1}
                   key={id}
@@ -249,12 +265,21 @@ export default function App() {
               );
             })}
           </div>
-          <div className="runtime-grid">
+          <div
+            id="runtime-panel"
+            className="runtime-grid"
+            role="tabpanel"
+            aria-labelledby={`lens-${lens}`}
+          >
             <div className="world-panel">
               <div className={`run-heading status-${run.status}`}>
                 <span className="status-dot" />
                 <div>
-                  <strong data-testid="run-status">
+                  <strong
+                    data-testid="run-status"
+                    role="status"
+                    aria-live="polite"
+                  >
                     {statuses[run.status][lang]}
                   </strong>
                   <span>
@@ -265,7 +290,10 @@ export default function App() {
                   </span>
                 </div>
                 {run.status === "ready" && (
-                  <button className="primary start-run" onClick={() => setPlaying(true)}>
+                  <button
+                    className="primary start-run"
+                    onClick={() => setPlaying(true)}
+                  >
                     {t("Start run", "Başlat")}
                   </button>
                 )}
@@ -282,18 +310,7 @@ export default function App() {
                   </select>
                 </label>
               </div>
-              <Suspense
-                fallback={
-                  <div className="scene loading">
-                    {t(
-                      "Loading runtime topology…",
-                      "Çalışma topolojisi yükleniyor…",
-                    )}
-                  </div>
-                }
-              >
-                <RuntimeWorld run={run} lens={lens} lang={lang} />
-              </Suspense>
+              <RuntimeView run={run} lens={lens} lang={lang} />
               <div className="world-message">
                 <span>
                   {run.events.at(-1)?.seq
@@ -311,6 +328,62 @@ export default function App() {
                   <p>{run.events.at(-1)?.detail[lang] ?? run.task[lang]}</p>
                 </div>
               </div>
+              {[
+                "awaiting_approval",
+                "needs_review",
+                "failed",
+                "denied",
+                "complete",
+              ].includes(run.status) && (
+                <div className={`run-outcome outcome-${run.status}`}>
+                  <p>
+                    {!isLive
+                      ? t(
+                          "You are inspecting history. Return to the latest event to act.",
+                          "Geçmişi inceliyorsunuz. Eylem için son olaya dönün.",
+                        )
+                      : run.status === "awaiting_approval"
+                        ? t(
+                            "The report is unchanged. Review the draft to approve or deny this write.",
+                            "Rapor değişmedi. Yazmayı onaylamak veya reddetmek için taslağı inceleyin.",
+                          )
+                        : run.status === "complete"
+                          ? t(
+                              "One approved write. Replay the trace or inspect the final report.",
+                              "Onaylı tek yazma. İzi yeniden oynatın veya son raporu inceleyin.",
+                            )
+                          : run.status === "needs_review"
+                            ? t(
+                                "Evidence checks failed. The report is unchanged; inspect EVL for the cause.",
+                                "Kanıt denetimleri başarısız. Rapor değişmedi; nedeni EVL içinde inceleyin.",
+                              )
+                            : t(
+                                "The run stopped without writing. Inspect the last event or reset to try again.",
+                                "Yürütme yazmadan durdu. Son olayı inceleyin veya tekrar denemek için sıfırlayın.",
+                              )}
+                  </p>
+                  <button
+                    onClick={() => {
+                      if (!isLive) seek(playback.history.length - 1);
+                      else if (run.status === "awaiting_approval")
+                        setModal("review");
+                      else if (run.status === "complete") setModal("resources");
+                      else {
+                        setLens(run.status === "needs_review" ? "evl" : "hns");
+                        setModal("inspect");
+                      }
+                    }}
+                  >
+                    {!isLive
+                      ? t("Return to latest", "Son olaya dön")
+                      : run.status === "awaiting_approval"
+                        ? t("Review action", "Eylemi incele")
+                        : run.status === "complete"
+                          ? t("View report", "Raporu gör")
+                          : t("Inspect result", "Sonucu incele")}
+                  </button>
+                </div>
+              )}
             </div>
             <button
               className="inspect-mobile"
@@ -321,12 +394,7 @@ export default function App() {
               <strong>{lens.toUpperCase()}</strong>
               <ChevronRight size={17} />
             </button>
-            <div
-              id="lens-panel"
-              className="desktop-inspector"
-              role="tabpanel"
-              aria-labelledby={`lens-${lens}`}
-            >
+            <div className="desktop-inspector">
               <Inspector
                 run={run}
                 lens={lens}
@@ -348,7 +416,10 @@ export default function App() {
             }}
             onSeek={seek}
             onReset={() => reset()}
-            onExport={() => { setPlaying(false); setModal("export"); }}
+            onExport={() => {
+              setPlaying(false);
+              setModal("export");
+            }}
           />
         </section>
         <section className="lesson-strip">
@@ -359,7 +430,11 @@ export default function App() {
             <ChevronRight size={16} />
           </button>
         </section>
-        <LabShell manifest={manifest} experiment={experiments.find(e => e.id === scenario.id)!} locale={lang} />
+        <LabShell
+          manifest={manifest}
+          experiment={experiments.find((e) => e.id === scenario.id)!}
+          locale={lang}
+        />
         <footer>
           <span>
             {t(
@@ -388,24 +463,38 @@ export default function App() {
         open={modal !== null}
         onClose={() => setModal(null)}
         title={
-          modal === "export" ? t("Export the run", "Yürütmeyi dışa aktar") : modal === "inspect"
-            ? lenses[lens].name[lang]
-            : modal === "review"
-              ? t(
-                  "Review the consequential action",
-                  "Sonuç doğuran eylemi incele",
-                )
-              : modal === "learn"
-                ? t("Agent Runtime 101", "Ajan Çalışma Sistemi 101")
-                : t("Synthetic document store", "Sentetik belge deposu")
+          modal === "export"
+            ? t("Export the run", "Yürütmeyi dışa aktar")
+            : modal === "inspect"
+              ? lenses[lens].name[lang]
+              : modal === "review"
+                ? t(
+                    "Review the consequential action",
+                    "Sonuç doğuran eylemi incele",
+                  )
+                : modal === "learn"
+                  ? t("Agent Runtime 101", "Ajan Çalışma Sistemi 101")
+                  : t("Synthetic document store", "Sentetik belge deposu")
         }
         closeLabel={t("Close dialog", "Pencereyi kapat")}
       >
         {modal === "export" && (
           <div className="export-preview">
-            <p>{t("This JSON contains the synthetic run and its historical snapshots. Download it, or select and copy the text directly.", "Bu JSON, sentetik yürütmeyi ve geçmiş anlık görüntülerini içerir. İndirin veya metni seçip doğrudan kopyalayın.")}</p>
-            <textarea aria-label={t("Trace JSON", "İz JSON")} readOnly value={JSON.stringify(exportTrace(playback), null, 2)} onFocus={e => e.currentTarget.select()} />
-            <button className="primary" onClick={exportRun}>{t("Download JSON", "JSON indir")}</button>
+            <p>
+              {t(
+                "This JSON contains the synthetic run and its historical snapshots. Download it, or select and copy the text directly.",
+                "Bu JSON, sentetik yürütmeyi ve geçmiş anlık görüntülerini içerir. İndirin veya metni seçip doğrudan kopyalayın.",
+              )}
+            </p>
+            <textarea
+              aria-label={t("Trace JSON", "İz JSON")}
+              readOnly
+              value={traceJSON}
+              onFocus={(e) => e.currentTarget.select()}
+            />
+            <button className="primary" onClick={exportRun}>
+              {t("Download JSON", "JSON indir")}
+            </button>
           </div>
         )}
         {modal === "inspect" && (
@@ -548,12 +637,19 @@ export default function App() {
                 {t("Try it in the laboratory", "Laboratuvarda dene")}
               </strong>
               <p>{chapters[chapter].try[lang]}</p>
+              {chapterEvent < 0 && (
+                <p className="lesson-unavailable">
+                  {t(
+                    "This station has no recorded event yet. Continue the run first; writing and audit require your approval.",
+                    "Bu istasyon için henüz olay kaydedilmedi. Önce yürütmeyi ilerletin; yazma ve denetim izi onayınızı gerektirir.",
+                  )}
+                </p>
+              )}
               <button
+                disabled={chapterEvent < 0}
                 onClick={() => {
-                  const idx = playback.history.findIndex(
-                    (r) => r.events.at(-1)?.zone === chapters[chapter].zone,
-                  );
-                  if (idx >= 0) seek(idx);
+                  if (chapterEvent < 0) return;
+                  seek(chapterEvent);
                   setLens(
                     chapter === 1
                       ? "ctx"

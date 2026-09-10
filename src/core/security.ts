@@ -4,7 +4,8 @@ import {
   type PolicyDecision,
   type ToolCall,
 } from "./types";
-import { tools } from "./scenarios";
+import { getScenario, tools } from "./scenarios";
+import { verify } from "./evaluation";
 export function authorize(run: AgentRun, call: ToolCall): PolicyDecision {
   const tool = tools[call.tool],
     now = run.budget.elapsedMs,
@@ -33,6 +34,20 @@ export function authorize(run: AgentRun, call: ToolCall): PolicyDecision {
   if (now >= delegation.expiresAt)
     return deny("Delegation expired", "Yetki devri sona erdi");
   if (call.tool === "write_report") {
+    if (call.input.draft !== run.state.draft || run.state.writeCount !== 0)
+      return deny(
+        "Write input changed or action already committed",
+        "Yazma girdisi değişti veya eylem zaten uygulandı",
+      );
+    if (
+      !verify(run, getScenario(run.scenarioId)).every(
+        (c) => c.status === "pass",
+      )
+    )
+      return deny(
+        "Current evidence no longer satisfies the write contract",
+        "Mevcut kanıt artık yazma sözleşmesini karşılamıyor",
+      );
     if (
       ![
         "latestQuarterFound",
