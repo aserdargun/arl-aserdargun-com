@@ -1,1 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#152b43"/><path d="M14 46 30 16h5l15 30H39l-6-13-7 13z" fill="#7be0c0"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" role="img" aria-label="ARL">
+  <rect width="320" height="320" rx="64" fill="#121310"/>
+  <circle cx="160" cy="142" r="108" fill="#c8ff36"/>
+  <g fill="none" stroke="#0c0d0a" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="94" y1="142" x2="226" y2="142"/>
+    <rect x="76" y="124" width="36" height="36" rx="8" fill="#c8ff36"/>
+    <rect x="130" y="112" width="60" height="60" rx="12" fill="#c8ff36"/>
+    <rect x="208" y="124" width="36" height="36" rx="8" fill="#c8ff36"/>
+    <path d="M144 142 l11 11 20-23"/>
+  </g>
+  <text x="160" y="296" text-anchor="middle" fill="#c8ff36" font-family="Inter, Helvetica, Arial, sans-serif" font-size="40" font-weight="800" letter-spacing="-2">ARL</text>
+</svg>
