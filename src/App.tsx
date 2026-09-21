@@ -30,6 +30,8 @@ import Inspector, { CheckList } from "./components/Inspector";
 import Timeline from "./components/Timeline";
 import Dialog from "./components/Dialog";
 import RuntimeView from "./components/RuntimeView";
+import LearningPaths from "./components/LearningPaths";
+import { learningPaths, learningUrl, portfolioUrl } from "./lessons/ecosystem";
 const lensIcons = { hns: Boxes, ctx: Layers, sec: ShieldCheck, evl: Activity };
 const route = initialRoute(window.location.search);
 export default function App() {
@@ -55,6 +57,21 @@ export default function App() {
     t = (en: string, tr: string) => (lang === "en" ? en : tr);
   useEffect(() => {
     document.documentElement.lang = lang;
+    document.title =
+      lang === "tr"
+        ? "ARL — Ajan Çalışma Zamanı Laboratuvarı"
+        : "ARL — Agent Runtime Laboratory";
+    document
+      .querySelector('meta[name="description"]')
+      ?.setAttribute(
+        "content",
+        lang === "tr"
+          ? "Tek bir deterministik ajan simülasyonunda bağlamı, araçları, yetkiyi, kanıtları ve insan onayını inceleyin. Canlı model veya dış eylem yoktur."
+          : "Explore context, tools, authority, evidence and human approval in one deterministic agent simulation. No live model or external actions.",
+      );
+    const url = new URL(window.location.href);
+    url.searchParams.set("lang", lang);
+    window.history.replaceState(window.history.state, "", url);
     try {
       localStorage.setItem("arl.locale", lang);
     } catch {}
@@ -163,7 +180,7 @@ export default function App() {
           </button>
           <a
             className="ecosystem"
-            href="https://aserdargun.com"
+            href={portfolioUrl(lang)}
             target="_blank"
             rel="noreferrer"
           >
@@ -428,20 +445,37 @@ export default function App() {
           <BookOpen size={22} />
           <p>{scenario.lesson[lang]}</p>
           <button onClick={() => setModal("learn")}>
-            {t("Agent Runtime 101", "Ajan Çalışma Sistemi 101")}
+            {t("Agent Runtime 101", "Ajan Çalışma Zamanı 101")}
             <ChevronRight size={16} />
           </button>
         </section>
         <section className="semantic-handoff">
           <strong>{t("Agent → Serve", "Ajan → Sun")}</strong>
-          <p>{t("Inspect the latest model invocation as a fresh serving scenario. Only a short/long context class and normal priority are sent. Task text, documents, credentials and approvals remain here. ARL context units are not token counts.", "Son model çağrısını yeni bir sunum senaryosu olarak inceleyin. Yalnızca kısa/uzun bağlam sınıfı ve normal öncelik gönderilir. Görev metni, belgeler, kimlik bilgileri ve onaylar burada kalır. ARL bağlam birimleri token sayısı değildir.")}</p>
-          {modelServingLink(run,lang) ? <a data-testid="arl-to-tfl" href={modelServingLink(run,lang)!}>{t("Inspect model serving → TFL", "Model sunumunu incele → TFL")}</a> : <p>{t("Step through the runtime until a model invocation is recorded.", "Bir model çağrısı kaydedilene kadar çalışma zamanında adım ilerleyin.")}</p>}
+          <p>
+            {t(
+              "Inspect the latest model invocation as a fresh serving scenario. Only a short/long context class and normal priority are sent. Task text, documents, credentials and approvals remain here. ARL context units are not token counts.",
+              "Son model çağrısını yeni bir sunum senaryosu olarak inceleyin. Yalnızca kısa/uzun bağlam sınıfı ve normal öncelik gönderilir. Görev metni, belgeler, kimlik bilgileri ve onaylar burada kalır. ARL bağlam birimleri token sayısı değildir.",
+            )}
+          </p>
+          {modelServingLink(run, lang) ? (
+            <a data-testid="arl-to-tfl" href={modelServingLink(run, lang)!}>
+              {t("Inspect model serving → TFL", "Model sunumunu incele → TFL")}
+            </a>
+          ) : (
+            <p>
+              {t(
+                "Step through the runtime until a model invocation is recorded.",
+                "Bir model çağrısı kaydedilene kadar çalışma zamanında adım ilerleyin.",
+              )}
+            </p>
+          )}
         </section>
         <LabShell
           manifest={manifest}
           experiment={experiments.find((e) => e.id === scenario.id)!}
           locale={lang}
         />
+        <LearningPaths lang={lang} />
         <footer>
           <span>
             {t(
@@ -454,7 +488,7 @@ export default function App() {
             {(Object.keys(lenses) as Lens[]).map((id) => (
               <a
                 key={id}
-                href={lenses[id].url}
+                href={learningUrl(id, lang)}
                 target="_blank"
                 rel="noreferrer"
               >
@@ -480,7 +514,7 @@ export default function App() {
                     "Sonuç doğuran eylemi incele",
                   )
                 : modal === "learn"
-                  ? t("Agent Runtime 101", "Ajan Çalışma Sistemi 101")
+                  ? t("Agent Runtime 101", "Ajan Çalışma Zamanı 101")
                   : t("Synthetic document store", "Sentetik belge deposu")
         }
         closeLabel={t("Close dialog", "Pencereyi kapat")}
@@ -698,6 +732,25 @@ export default function App() {
                 )}
               </summary>
               <p>
+                {t(
+                  "ARL connects four research perspectives in one deterministic run. Explore each foundation:",
+                  "ARL dört araştırma perspektifini tek deterministik yürütmede birleştirir. Her birinin temelini keşfedin:",
+                )}
+              </p>
+              <ul>
+                {(Object.keys(lenses) as Lens[]).map((id) => (
+                  <li key={id}>
+                    <a
+                      href={learningUrl(id, lang)}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {id.toUpperCase()} · {lenses[id].name[lang]}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+              <p>
                 HNS / CTX / SEC / EVL → ARL →{" "}
                 {t("authorized action", "yetkili eylem")}
               </p>
@@ -710,7 +763,7 @@ export default function App() {
               <p>
                 ARL →{" "}
                 <a
-                  href="https://tfl.aserdargun.com"
+                  href={learningUrl("tfl", lang)}
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -718,7 +771,7 @@ export default function App() {
                 </a>{" "}
                 →{" "}
                 <a
-                  href="https://gex.aserdargun.com"
+                  href={learningUrl("gex", lang)}
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -729,6 +782,31 @@ export default function App() {
                 {t(
                   "Intent → agent → token → silicon → action is a conceptual learning path, not a literal single execution sequence. ARL stops at the model-call boundary.",
                   "Niyet → ajan → token → silikon → eylem kavramsal öğrenme yoludur; tek bir gerçek yürütme sırası değildir. ARL model çağrısı sınırında durur.",
+                )}
+              </p>
+              <p>
+                {t(
+                  "Related learning paths are independent applications:",
+                  "İlgili öğrenme yolları bağımsız uygulamalardır:",
+                )}
+              </p>
+              <ul>
+                {learningPaths.map((path) => (
+                  <li key={path.id}>
+                    <a
+                      href={learningUrl(path.id, lang)}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {path.id.toUpperCase()} · {path.title[lang]}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+              <p>
+                {t(
+                  "No run or approval is transferred through these links. AOS describes target architecture; it is not a running agent service.",
+                  "Bu bağlantılarla yürütme veya onay aktarılmaz. AOS hedef mimariyi açıklar; çalışan bir ajan servisi değildir.",
                 )}
               </p>
             </details>

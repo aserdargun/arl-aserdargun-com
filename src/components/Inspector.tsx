@@ -10,6 +10,7 @@ import {
 import type { AgentRun, Lens, Locale, VerificationCheck } from "../core/types";
 import { checkNames, lenses, statuses, zoneNames } from "../lessons/content";
 import { tools } from "../core/scenarios";
+import { learningUrl } from "../lessons/ecosystem";
 export function CheckList({
   checks,
   lang,
@@ -466,7 +467,7 @@ export default function Inspector({
       )}
       <a
         className="theory-link"
-        href={meta.url}
+        href={learningUrl(lens, lang)}
         target="_blank"
         rel="noreferrer"
       >

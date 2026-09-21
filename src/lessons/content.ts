@@ -1,7 +1,7 @@
 import { txt, type Copy, type Lens, type Zone } from "../core/types";
 export const lenses: Record<
   Lens,
-  { name: Copy; question: Copy; lesson: Copy; url: string }
+  { name: Copy; question: Copy; lesson: Copy }
 > = {
   hns: {
     name: txt("Harness", "Koşum"),
@@ -10,7 +10,6 @@ export const lenses: Record<
       "The harness coordinates decisions, tools, state, retries and stopping rules. Observability records what happened; it does not establish correctness.",
       "Koşum; kararları, araçları, durumu, yeniden denemeleri ve durma kurallarını koordine eder. Gözlemlenebilirlik ne olduğunu kaydeder; doğruluğu kanıtlamaz.",
     ),
-    url: "https://hns.aserdargun.com",
   },
   ctx: {
     name: txt("Context", "Bağlam"),
@@ -22,7 +21,6 @@ export const lenses: Record<
       "Context is information supplied to a model call. Memory persists under policy. State is the authoritative workflow condition. These are different things.",
       "Bağlam, model çağrısına sunulan bilgidir. Bellek, politika kapsamında kalıcıdır. Durum, iş akışının yetkili kaydıdır. Bunlar farklı şeylerdir.",
     ),
-    url: "https://ctx.aserdargun.com",
   },
   sec: {
     name: txt("Security", "Güvenlik"),
@@ -34,7 +32,6 @@ export const lenses: Record<
       "Authorization checks subject, purpose, resource, action and expiry. Identity alone grants no permission. Human approval does not remove every risk.",
       "Yetkilendirme; özne, amaç, kaynak, eylem ve süreyi denetler. Kimlik tek başına izin vermez. İnsan onayı tüm riskleri kaldırmaz.",
     ),
-    url: "https://sec.aserdargun.com",
   },
   evl: {
     name: txt("Evaluation", "Değerlendirme"),
@@ -43,7 +40,6 @@ export const lenses: Record<
       "Verification checks evidence and arithmetic. Evaluation checks the task contract. An unchecked requirement never silently becomes a pass.",
       "Doğrulama, kanıtı ve aritmetiği denetler. Değerlendirme, görev sözleşmesini denetler. Denetlenmemiş gereksinim sessizce geçmiş sayılmaz.",
     ),
-    url: "https://evl.aserdargun.com",
   },
 };
 export const zoneNames: Record<Zone, Copy> = {

@@ -8,7 +8,7 @@
   "status": "live",
   "tagline": {
     "en": "See what happens between intent and action.",
-    "tr": "Niyet ile eylem arasında olanları gör."
+    "tr": "Niyet ile eylem arasında neler olduğunu görün."
   },
   "guidingQuestion": {
     "en": "Why does a correct draft still require approval?",
@@ -111,7 +111,7 @@
       "id": "agent-runtime-101",
       "title": {
         "en": "Agent Runtime 101",
-        "tr": "Ajan Çalışma Sistemi 101"
+        "tr": "Ajan Çalışma Zamanı 101"
       },
       "route": "/?lesson=agent-runtime-101"
     }
@@ -121,10 +121,7 @@
       "en": "Scripted execution, calculated checks and simulated authority remain separate. None establishes real-world verification or universal agent safety.",
       "tr": "Betikli yürütme, hesaplanmış kontroller ve simüle yetki ayrıdır. Hiçbiri gerçek dünya doğrulaması veya evrensel ajan güvenliği sağlamaz."
     },
-    "allowedKinds": [
-      "simulated",
-      "calculated"
-    ]
+    "allowedKinds": ["simulated", "calculated"]
   },
   "assumptions": [
     {
@@ -194,13 +191,8 @@
         "en": "Arithmetic, evidence checks and task evaluation run separately. A passed simulator check does not verify real-world facts or confer authority.",
         "tr": "Aritmetik, kanıt kontrolleri ve görev değerlendirmesi ayrı çalışır. Simülatörde geçen kontrol gerçek dünya olgusunu doğrulamaz veya yetki vermez."
       },
-      "assumptionRefs": [
-        "scripted-agent",
-        "simulated-authority"
-      ],
-      "calculatedFrom": [
-        "execution"
-      ]
+      "assumptionRefs": ["scripted-agent", "simulated-authority"],
+      "calculatedFrom": ["execution"]
     }
   ],
   "related": {
@@ -211,7 +203,11 @@
           "en": "Learn the theory · HNS",
           "tr": "Kuramı öğren · HNS"
         },
-        "url": "https://hns.aserdargun.com"
+        "url": "https://hns.aserdargun.com",
+        "localizedUrls": {
+          "en": "https://hns.aserdargun.com/en/",
+          "tr": "https://hns.aserdargun.com/tr/"
+        }
       },
       {
         "id": "ctx",
@@ -219,7 +215,11 @@
           "en": "Learn the theory · CTX",
           "tr": "Kuramı öğren · CTX"
         },
-        "url": "https://ctx.aserdargun.com"
+        "url": "https://ctx.aserdargun.com",
+        "localizedUrls": {
+          "en": "https://ctx.aserdargun.com/en/",
+          "tr": "https://ctx.aserdargun.com/tr/"
+        }
       },
       {
         "id": "sec",
@@ -227,7 +227,11 @@
           "en": "Learn the theory · SEC",
           "tr": "Kuramı öğren · SEC"
         },
-        "url": "https://sec.aserdargun.com"
+        "url": "https://sec.aserdargun.com",
+        "localizedUrls": {
+          "en": "https://sec.aserdargun.com/en/",
+          "tr": "https://sec.aserdargun.com/tr/"
+        }
       },
       {
         "id": "evl",
@@ -235,7 +239,23 @@
           "en": "Learn the theory · EVL",
           "tr": "Kuramı öğren · EVL"
         },
-        "url": "https://evl.aserdargun.com"
+        "url": "https://evl.aserdargun.com",
+        "localizedUrls": {
+          "en": "https://evl.aserdargun.com/en/",
+          "tr": "https://evl.aserdargun.com/tr/"
+        }
+      },
+      {
+        "id": "aos",
+        "label": {
+          "en": "Explore target architecture · AOS",
+          "tr": "Hedef mimariyi incele · AOS"
+        },
+        "url": "https://aos.aserdargun.com/",
+        "localizedUrls": {
+          "en": "https://aos.aserdargun.com/en/",
+          "tr": "https://aos.aserdargun.com/tr/"
+        }
       }
     ],
     "labs": [
@@ -250,6 +270,42 @@
           "en": "https://tfl.aserdargun.com/?lang=en",
           "tr": "https://tfl.aserdargun.com/?lang=tr"
         }
+      },
+      {
+        "id": "gex",
+        "label": {
+          "en": "Explore GPU execution · GEX",
+          "tr": "GPU yürütmesini keşfet · GEX"
+        },
+        "url": "https://gex.aserdargun.com/gex/anatomy",
+        "localizedUrls": {
+          "en": "https://gex.aserdargun.com/gex/anatomy?lang=en",
+          "tr": "https://gex.aserdargun.com/gex/anatomy?lang=tr"
+        }
+      },
+      {
+        "id": "mem",
+        "label": {
+          "en": "Explore agent memory · MEM",
+          "tr": "Ajan belleğini keşfet · MEM"
+        },
+        "url": "https://mem.aserdargun.com/"
+      },
+      {
+        "id": "dpl",
+        "label": {
+          "en": "Compare decision policies · DPL",
+          "tr": "Karar politikalarını karşılaştır · DPL"
+        },
+        "url": "https://dpl.aserdargun.com/"
+      },
+      {
+        "id": "cul",
+        "label": {
+          "en": "Explore computer use · CUL",
+          "tr": "Bilgisayar kullanımını keşfet · CUL"
+        },
+        "url": "https://cul.aserdargun.com/"
       }
     ]
   },

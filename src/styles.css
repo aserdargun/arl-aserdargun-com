@@ -950,6 +950,73 @@ details details {
   font-size: 11px;
   white-space: nowrap;
 }
+.learning-paths {
+  padding: 26px 0;
+  border-bottom: 1px solid var(--line);
+}
+.learning-paths-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.learning-paths h2 {
+  margin: 0;
+  font-size: 21px;
+}
+.learning-paths a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 44px;
+  color: #35516d;
+  font-size: 12px;
+  font-weight: 600;
+}
+.learning-paths-note {
+  max-width: 850px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+.learning-paths-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+.learning-paths article {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+.learning-path-code {
+  font: 12px "IBM Plex Mono", monospace;
+  color: var(--teal);
+}
+.learning-paths h3 {
+  margin: 12px 0 0;
+  font-size: 16px;
+  line-height: 1.4;
+}
+.learning-paths article p {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+.learning-paths article a {
+  margin-top: auto;
+}
+@media (max-width: 600px) {
+  .learning-paths-grid {
+    grid-template-columns: 1fr;
+  }
+}
 footer {
   display: flex;
   justify-content: space-between;

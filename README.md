@@ -2,13 +2,13 @@
 
 **See what happens between intent and action.**
 
-ARL is a bilingual, deterministic educational agent runtime. A single revenue-update execution can be inspected through **HNS / Harness**, **CTX / Context**, **SEC / Security**, and **EVL / Evaluation**. The intended custom domain is `arl.aserdargun.com`; custom-domain binding is separate from the Azure-generated production hostname.
+ARL is a bilingual, deterministic educational agent runtime. A single revenue-update execution can be inspected through **HNS / Harness**, **CTX / Context**, **SEC / Security**, and **EVL / Evaluation**. Public site: [arl.aserdargun.com](https://arl.aserdargun.com/). ARL belongs to the [aserdargun.com learning system](https://aserdargun.com/).
 
 ## Run
 
 Node.js 22. Install with `npm ci`, then `npm run dev`. The checkout uses `http://127.0.0.1:5191` with a strict port: it never takes over another process. `npm run build` produces `dist/`; `npm run preview` serves the artifact on the same port after stopping this checkout's dev server.
 
-`npm test` runs the deterministic runtime, security, context, evaluation and replay tests. `npm run check` runs these tests and the production build. CI runs the same checks. Browser acceptance was exercised in the Codex in-app browser; see [QA](docs/QA.md).
+`npm test` runs the deterministic runtime, security, context, evaluation and replay tests. `npm run check` runs these tests and the production build. CI runs the same checks. The original browser acceptance record is in [QA](docs/QA.md); it is dated evidence, not a claim about every subsequent build.
 
 ## Try the defining experience
 
@@ -42,7 +42,9 @@ Additional controlled scenarios exercise temporary failures, persistent timeouts
 - [Acceptance and senior review](docs/QA.md)
 - [Visual reference and fidelity decisions](docs/design/REVIEW.md)
 
-V2 comparisons, branching, richer memory/least-privilege labs and trace imports are deferred. No external adapters or multi-agent features are included in CORE.
+The bilingual learning paths connect to MEM for memory lifecycle, DPL for decision policies, CUL for simulated interface actions, and AOS for target architecture. These are independent applications; the links transfer no runtime state or authority. Language-aware routes are used where supported; MEM, DPL and CUL provide their own language controls.
+
+V2 comparisons, branching, richer memory/least-privilege scenarios inside ARL and trace imports are deferred. No external adapters or multi-agent features are included in CORE.
 
 ## Azure publication
 
@@ -52,6 +54,6 @@ The public repository is `aserdargun/arl-aserdargun-com`. The `main` branch depl
 
 ## ILS compatibility
 
-The committed canonical ILS 0.1 archives in `vendor/` supply shared contracts, controls and inspectable provenance. The manifest describes the existing nine scenarios; Agent Runtime 101 is adapted directly from the twelve existing chapters. Evidence distinguishes simulated traces from calculated checks. Real-world verification and authority are never inferred from successful simulated execution.
+The committed canonical lab-core/lab-ui 0.2.0 archives (wire schema 0.1) in `vendor/` supply shared contracts, controls and inspectable provenance. The manifest describes the existing nine scenarios; Agent Runtime 101 is adapted directly from the twelve existing chapters. Evidence distinguishes simulated traces from calculated checks. Real-world verification and authority are never inferred from successful simulated execution.
 
-Use `?scenario=<existing-id>`, `?lesson=agent-runtime-101` and `?lang=en|tr` to open existing content. Unsupported `ils` payloads are ignored; no cross-lab runtime state or arbitrary return URL is accepted. Play/pause, step, rewind and reset retain their original callbacks, replay semantics and authority gates. `lab.manifest.json` is included before release hashes are generated. No ILS sibling checkout is required for installation or deployment.
+Use `?scenario=<existing-id>`, `?lesson=agent-runtime-101` and `?lang=en|tr` to open existing content. Switching language updates the URL, browser title and description; reload retains the chosen language even after entry through a localized link. Unsupported `ils` payloads are ignored; no cross-lab runtime state or arbitrary return URL is accepted. Play/pause, step, rewind and reset retain their original callbacks, replay semantics and authority gates. `lab.manifest.json` is included before release hashes are generated. The dedicated ARL → TFL link transfers only the semantic metadata described in [Cross-lab handoff](docs/CROSS-LAB-HANDOFF.md), never the run or approval. No ILS sibling checkout is required for installation or deployment.

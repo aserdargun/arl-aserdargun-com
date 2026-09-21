@@ -4,7 +4,7 @@ Verified locally on 2026-09-09. This is a local implementation acceptance record
 
 ## Automated verification
 
-`npm run check` passes: **47 tests across three files**, TypeScript checking, and the Vite production build. Tests cover the A–D vertical slice, exact authority scope, grant expiry/reuse, changed drafts, missing contracts, injection boundaries, context selection/provenance/memory policy, independent arithmetic and citation checks, retry bounds, budget exhaustion, deterministic reset and replay without repeated effects.
+The original acceptance run of `npm run check` passed: **47 tests across three files**, TypeScript checking, and the Vite production build. Tests cover the A–D vertical slice, exact authority scope, grant expiry/reuse, changed drafts, missing contracts, injection boundaries, context selection/provenance/memory policy, independent arithmetic and citation checks, retry bounds, budget exhaustion, deterministic reset and replay without repeated effects.
 
 ## Browser acceptance
 
@@ -27,7 +27,7 @@ Also checked: Play, Pause, Step, Rewind, Reset, selecting trace events, parent/c
 
 At 390×844 the Turkish bottom-sheet inspector exposes authority, review and deny actions. The review-to-denial path was exercised. The textual topology exposes every station and current-step text. At widths 320, 390, 768 and 1440, document width remained within the viewport. Desktop visual review used 1600×1000. Initial language preference survives reload; runtime does not persist across reload/reset.
 
-Production browser logs contained no application errors. The Three.js/Fiber dependency emits a `THREE.Clock` deprecation warning; it is not suppressed and did not prevent interaction. A comprehensive automated accessibility audit or cross-browser/device certification is not claimed.
+The original browser session recorded no application errors. The Three.js/Fiber dependency emits a `THREE.Clock` deprecation warning; it is not suppressed and did not prevent interaction. A comprehensive automated accessibility audit or cross-browser/device certification is not claimed.
 
 The in-app browser did not expose a completed native download event. To keep export reviewable, the export dialog shows the complete selectable JSON; its parsed format/version and event/snapshot correspondence were verified from visible text. Browser-managed saving remains environment-dependent; native download completion is not claimed.
 
