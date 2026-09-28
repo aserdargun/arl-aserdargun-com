@@ -8,7 +8,8 @@
     "build": "tsc --noEmit && vite build && node scripts/release.mjs write",
     "preview": "vite preview --host 127.0.0.1 --port 5191 --strictPort",
     "test": "vitest run",
-    "check": "npm test && npm run build",
+    "test:e2e": "playwright test",
+    "check": "npm test && npm run build && npm run test:e2e",
     "verify:artifact": "node scripts/release.mjs verify"
   },
   "dependencies": {
@@ -24,6 +25,7 @@
     "@aserdargun/lab-ui": "file:vendor/aserdargun-lab-ui-0.2.0-5a573640012a6472.tgz"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@types/node": "26.4.0",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.5",

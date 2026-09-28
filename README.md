@@ -8,7 +8,7 @@ ARL is a bilingual, deterministic educational agent runtime. A single revenue-up
 
 Node.js 22. Install with `npm ci`, then `npm run dev`. The checkout uses `http://127.0.0.1:5191` with a strict port: it never takes over another process. `npm run build` produces `dist/`; `npm run preview` serves the artifact on the same port after stopping this checkout's dev server.
 
-`npm test` runs the deterministic runtime, security, context, evaluation and replay tests. `npm run check` runs these tests and the production build. CI runs the same checks. The original browser acceptance record is in [QA](docs/QA.md); it is dated evidence, not a claim about every subsequent build.
+`npm test` runs the deterministic runtime, security, context, evaluation and replay tests. `npm run check` runs these tests, the production build and the Playwright browser suite in `e2e/`, which covers manifest scenario routes, locale switching, keyboard operation of the run control and lens tabs, and responsive layout. CI runs the same checks. The original browser acceptance record is in [QA](docs/QA.md); it is dated evidence, not a claim about every subsequent build.
 
 ## Try the defining experience
 
