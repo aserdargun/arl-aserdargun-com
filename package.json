@@ -9,20 +9,21 @@
     "preview": "vite preview --host 127.0.0.1 --port 5191 --strictPort",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "check": "npm test && npm run build && npm run test:e2e",
+    "check": "npm run lint && npm test && npm run build && npm run test:e2e",
+    "lint": "oxlint --type-aware --deny-warnings .",
     "verify:artifact": "node scripts/release.mjs verify"
   },
   "dependencies": {
+    "@aserdargun/lab-core": "file:vendor/aserdargun-lab-core-0.2.0-fb38c750c230ff3d.tgz",
+    "@aserdargun/lab-ui": "file:vendor/aserdargun-lab-ui-0.2.0-5a573640012a6472.tgz",
     "@fontsource-variable/inter": "5.3.0",
     "@fontsource/ibm-plex-mono": "5.3.0",
-    "@react-three/fiber": "^9.0.0",
     "@react-three/drei": "^10.0.0",
+    "@react-three/fiber": "^9.0.0",
+    "lucide-react": "1.39.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "three": "^0.183.0",
-    "lucide-react": "1.39.0",
-    "@aserdargun/lab-core": "file:vendor/aserdargun-lab-core-0.2.0-fb38c750c230ff3d.tgz",
-    "@aserdargun/lab-ui": "file:vendor/aserdargun-lab-ui-0.2.0-5a573640012a6472.tgz"
+    "three": "^0.183.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
@@ -31,6 +32,8 @@
     "@types/react-dom": "19.2.5",
     "@types/three": "^0.183.0",
     "@vitejs/plugin-react": "6.1.1",
+    "oxlint": "^1.86.0",
+    "oxlint-tsgolint": "^7.0.2003",
     "typescript": "7.0.2",
     "vite": "8.2.2",
     "vitest": "4.1.11"

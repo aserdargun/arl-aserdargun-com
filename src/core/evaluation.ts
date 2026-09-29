@@ -91,7 +91,7 @@ export function verify(
       "Çıkarılan değerler kaynakla eşleşiyor",
       values.length === 2 &&
         values.every((v) => {
-          const e = ev.find((e) => e.id === v.evidenceId);
+          const e = ev.find((item) => item.id === v.evidenceId);
           return (
             !!e &&
             e.quarter === v.quarter &&

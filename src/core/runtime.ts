@@ -926,9 +926,9 @@ export function decideApproval(
 }
 export function runUntilStop(run = createRun()): AgentRun {
   for (let i = 0; i < 500; i++) {
-    const next = advance(run);
-    if (next === run) return run;
-    run = next;
+    const following = advance(run);
+    if (following === run) return run;
+    run = following;
   }
   throw new Error("Runtime failed to reach a bounded stop");
 }

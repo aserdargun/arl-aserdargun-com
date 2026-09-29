@@ -69,7 +69,7 @@ describe("Authority boundaries", () => {
   });
   it("expired permission cannot authorize a read", () => {
     const r = runUntilStop();
-    const c = r.toolCalls.find((c) => c.tool === "read_document")!;
+    const c = r.toolCalls.find((call) => call.tool === "read_document")!;
     r.delegatedAuthority.permissions[0].expiresAt = 0;
     expect(authorize(r, c).decision).toBe("deny");
   });
@@ -144,7 +144,7 @@ describe("Context and replay", () => {
     expect(r.events.every((e, i) => i === 0 || e.at > r.events[i - 1].at)).toBe(
       true,
     );
-    for (const c of r.toolCalls.filter((c) => c.status === "succeeded"))
+    for (const c of r.toolCalls.filter((call) => call.status === "succeeded"))
       expect(c.completedAt).toBeGreaterThan(c.startedAt!);
   });
 });

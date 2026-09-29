@@ -398,18 +398,18 @@ export default function Inspector({
               )}
             </Field>
             <Field name={t("SUPPORTING EVIDENCE", "DESTEKLEYEN KANIT")}>
-              {run.evidence.map((e) => (
-                <div key={e.id} className="evidence-row">
+              {run.evidence.map((item) => (
+                <div key={item.id} className="evidence-row">
                   <FileText size={16} />
                   <div>
                     <strong>
-                      {e.quarter} · {e.value}
+                      {item.quarter} · {item.value}
                     </strong>
                     <code>
-                      [{e.id}] · {e.revision}
+                      [{item.id}] · {item.revision}
                     </code>
                     <small>
-                      {e.callId} · t + {e.at / 1000}s
+                      {item.callId} · t + {item.at / 1000}s
                     </small>
                   </div>
                 </div>

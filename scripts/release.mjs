@@ -55,7 +55,7 @@ assert(
   files.includes("index.html") && files.includes("staticwebapp.config.json"),
 );
 const html = await readFile("dist/index.html", "utf8");
-for (const match of html.matchAll(/(?:src|href)="\/(assets\/[^\"]+)"/g))
+for (const match of html.matchAll(/(?:src|href)="\/(assets\/[^"]+)"/g))
   assert(files.includes(match[1]), `Missing entry asset: ${match[1]}`);
 assert(
   files.some((path) => /assets\/RuntimeWorld-.*\.js$/.test(path)),
