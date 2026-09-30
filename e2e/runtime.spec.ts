@@ -142,3 +142,75 @@ test('desktop and mobile viewports render without horizontal overflow', async ({
     );
   }
 });
+
+test('the evidence surface is reachable and bilingual, and every citation is external', async ({ page }) => {
+  await page.goto('/');
+  const section = page.locator('#methodology');
+  await section.scrollIntoViewIfNeeded();
+  await expect(section).toBeVisible();
+  // Every source link is a real external URL, and each one states its limit.
+  const sources = section.locator('.source-item');
+  const count = await sources.count();
+  expect(count).toBeGreaterThanOrEqual(1);
+  for (let i = 0; i < count; i++) {
+    const item = sources.nth(i);
+    const href = await item.locator('a').getAttribute('href');
+    expect(href, `source ${i}`).toMatch(/^https:\/\//);
+    expect(href, `source ${i}`).not.toMatch(/aserdargun/);
+    expect(href, `source ${i}`).not.toMatch(/w3\.org/);
+    await expect(item.locator('.source-label.warn')).toBeVisible();
+  }
+  // The reviewed date is visible, not only present in the repository.
+  await expect(section.locator('.methodology-reviewed')).toContainText(/\d{4}-\d{2}-\d{2}/);
+  // Switching locale must not leave an untranslated evidence surface behind.
+  await page.getByRole('button', { name: 'Switch to Turkish' }).click();
+  await expect(page.locator('#methodology h2')).toHaveText(
+    'İçerik incelemesi ve kanıt',
+  );
+  await expect(sources.first()).toBeVisible();
+  await expect(section).toContainText('Desteklemez');
+});
+
+test('the simulation boundary is stated at the point of use, not only in the repository', async ({ page }) => {
+  const boundary = page.locator('.boundary-note').first();
+  await expect(boundary).toContainText(
+    'A simulation check does not validate a real-world claim.',
+  );
+  // The review confirmation surface carries it next to the approve control.
+  await page.goto(experiment('revenue').route);
+  await page.getByLabel('Playback pace').selectOption('Fast');
+  await page.getByRole('button', { name: 'Start run', exact: true }).click();
+  await expect(page.getByTestId('run-status')).toHaveText('Awaiting human approval', {
+    timeout: 30000,
+  });
+  await page.getByRole('button', { name: 'Review action' }).first().click();
+  const dialog = page.getByRole('dialog');
+  await expect(dialog).toBeVisible();
+  await expect(dialog.locator('.boundary-note')).toContainText(
+    'A simulation check does not validate a real-world claim.',
+  );
+  // The inspection surface carries it in the evaluation lens too.
+  await page.getByRole('button', { name: 'Close dialog' }).click();
+  await page.locator('#lens-evl').click();
+  await expect(page.locator('.desktop-inspector .boundary-note')).toBeVisible();
+});
+
+test('each guide chapter names the scenarios that demonstrate it', async ({ page }) => {
+  await page.goto(manifest.lessons[0].route);
+  const dialog = page.getByRole('dialog');
+  await expect(dialog.locator('.chapter-count')).toBeVisible();
+  const covered = new Set<string>();
+  for (let chapter = 0; chapter < 12; chapter++) {
+    const buttons = dialog.locator('.chapter-coverage-scenarios button');
+    const n = await buttons.count();
+    expect(n, `chapter ${chapter + 1}`).toBeGreaterThan(0);
+    for (let i = 0; i < n; i++) covered.add((await buttons.nth(i).innerText()).trim());
+    if (chapter < 11) await dialog.getByRole('button', { name: 'Next chapter' }).click();
+  }
+  // Every scenario the site can run is connectable to the guide.
+  for (const declared of manifest.experiments) expect(covered, declared.id).toContain(declared.title.en);
+  // Selecting a listed scenario routes the laboratory to it.
+  await dialog.locator('.chapter-coverage-scenarios button').first().click();
+  await expect(page.getByRole('dialog')).toBeHidden();
+  await expect(page.getByLabel('Scenario', { exact: true })).toHaveValue('revenue');
+});

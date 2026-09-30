@@ -11,6 +11,7 @@ import type { AgentRun, Lens, Locale, VerificationCheck } from "../core/types";
 import { checkNames, lenses, statuses, zoneNames } from "../lessons/content";
 import { tools } from "../core/scenarios";
 import { learningUrl } from "../lessons/ecosystem";
+import { BoundaryNote } from "./Methodology";
 export function CheckList({
   checks,
   lang,
@@ -416,6 +417,9 @@ export default function Inspector({
               ))}
               {!run.evidence.length && <p>—</p>}
             </Field>
+            {/* The checks above are the point of use: a reader decides here
+                whether a green status means anything outside the simulator. */}
+            <BoundaryNote lang={lang} />
           </>
         )}
         {run.state.draft && (
@@ -447,6 +451,7 @@ export default function Inspector({
               "Doğrulanmış taslak hazır. Tek kullanımlık izin vermeden tam eylemi incele.",
             )}
           </p>
+          <BoundaryNote lang={lang} />
           <div className="button-row">
             <button className="primary" onClick={onReview} disabled={!isLive}>
               {t("Review action", "Eylemi incele")}

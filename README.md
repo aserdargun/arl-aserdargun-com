@@ -30,6 +30,25 @@ Additional controlled scenarios exercise temporary failures, persistent timeouts
 - Time, context capacity, and execution units are synthetic. One unit is charged per model call or tool attempt. These are not measured latency, token limits, currency cost, or platform benchmarks.
 - A successful tool call does not verify its result. Verification, outcome evaluation and authority remain separate. An untrusted note is not marked verified when unrelated revenue checks pass.
 - One-use human approval is tied to the run, exact draft, resource, action and logical expiry. It does not prove universal safety.
+- A simulation check does not validate a real-world claim. This sentence is rendered in the app, next to the evaluation checks, the approval prompt and the inspector, not only here.
+
+## Evidence surface
+
+The public site carries a review and evidence section (`#methodology`) in both locales. It records two dates and nothing else: the date on which the cited URLs were last checked (2026-09-30) and the date of the local acceptance record in [QA](docs/QA.md) (2026-09-09). No publication date is restated for any source, and no measurement of this simulator exists to report.
+
+Behavioral claims about authority, prompt injection and isolation are backed by primary documents that support the **concept only**, never this simulator's behavior. Each entry states what the source supports and what it does not:
+
+| Source | Concept it supports |
+|---|---|
+| OWASP GenAI Security Project — LLM01:2025 Prompt Injection | retrieved or untrusted content can change model behavior |
+| NIST SP 800-207, Zero Trust Architecture | reachability or identity alone grants no access |
+| NIST SP 800-53 Rev. 5 | authorization and least privilege are a separate control concern |
+| OpenAI Agents SDK — Human-in-the-loop | approval can gate one specific tool call |
+| gVisor documentation | running partially trusted work needs a real isolation layer |
+
+Claims that no consulted primary source supports — the synthetic document set, the deterministic decision script, the example arithmetic, and the chapter-to-scenario map — are listed on the site as deliberately uncited. `src/lessons/evidence.ts` and `src/lessons/coverage.ts` hold this content; `tests/evidence.test.ts` fails the build if a string loses its Turkish half, a citation loses its stated limit, or a mapping names a scenario that does not exist.
+
+The twelve guide chapters are connected to the nine scenarios in `src/lessons/coverage.ts`, and each chapter lists the scenarios that demonstrate it inside the lesson surface.
 
 ## Documentation
 

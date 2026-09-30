@@ -31,7 +31,10 @@ import Timeline from "./components/Timeline";
 import Dialog from "./components/Dialog";
 import RuntimeView from "./components/RuntimeView";
 import LearningPaths from "./components/LearningPaths";
+import Methodology, { BoundaryNote } from "./components/Methodology";
 import { learningPaths, learningUrl, portfolioUrl } from "./lessons/ecosystem";
+import { chapterCoverage, coverageCopy } from "./lessons/coverage";
+import { reviewSurface } from "./lessons/evidence";
 const lensIcons = { hns: Boxes, ctx: Layers, sec: ShieldCheck, evl: Activity };
 const route = initialRoute(window.location.search);
 export default function App() {
@@ -109,6 +112,8 @@ export default function App() {
   const chapterEvent = playback.history.findIndex(
     (r) => r.events.at(-1)?.zone === chapters[chapter].zone,
   );
+  const chapterScenarios =
+    chapterCoverage.find((c) => c.chapter === chapter) ?? chapterCoverage[0];
   const traceJSON = useMemo(
     () =>
       modal === "export" ? JSON.stringify(exportTrace(playback), null, 2) : "",
@@ -210,6 +215,14 @@ export default function App() {
                 "Eğitsel simülasyon · Canlı model veya dış eylem yok",
               )}
             </p>
+            <a className="intro-review" href="#methodology">
+              {t("Content reviewed", "İçerik incelendi")}{" "}
+              {reviewSurface.linkCheckDate} ·{" "}
+              {t(
+                "methodology, sources and what was not verified",
+                "yöntem, kaynaklar ve doğrulanmayanlar",
+              )}
+            </a>
           </div>
         </section>
         <section
@@ -476,12 +489,17 @@ export default function App() {
           locale={lang}
         />
         <LearningPaths lang={lang} />
+        <Methodology lang={lang} />
         <footer>
           <span>
             {t(
               "General agent system concepts · Educational abstraction",
               "Genel ajan sistemi kavramları · Eğitsel soyutlama",
             )}
+            {" · "}
+            <a href="#methodology">
+              {t("Reviewed", "İnceleme")} {reviewSurface.linkCheckDate}
+            </a>
           </span>
           <div>
             {t("Learn the theory", "Teoriyi öğren")}
@@ -590,6 +608,7 @@ export default function App() {
                 "Tek kullanımlık onay geniş ve kalıcı yetki eklemez. İnsan incelemesi her riski ortadan kaldırmaz.",
               )}
             </p>
+            <BoundaryNote lang={lang} />
             <div className="button-row">
               <button
                 className="primary"
@@ -706,6 +725,25 @@ export default function App() {
                 {t("Inspect in this run", "Bu yürütmede incele")}
                 <ArrowUpRight size={16} />
               </button>
+            </div>
+            <div className="chapter-coverage">
+              <strong>
+                {coverageCopy.heading[lang]}{" "}
+                <span className="muted">({coverageCopy.demonstratedLabel[lang]})</span>
+              </strong>
+              <p>{chapterScenarios.lookFor[lang]}</p>
+              <div className="chapter-coverage-scenarios">
+                {chapterScenarios.scenarioIds.map((id) => (
+                  <button
+                    key={id}
+                    className={id === scenario.id ? "current" : ""}
+                    onClick={() => reset(id)}
+                  >
+                    {scenarios.find((s) => s.id === id)!.title[lang]}
+                  </button>
+                ))}
+              </div>
+              <small>{coverageCopy.note[lang]}</small>
             </div>
             <div className="button-row chapter-controls">
               <button
