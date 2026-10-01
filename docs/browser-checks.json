@@ -50,11 +50,6 @@
       "id": "budget",
       "status": "Execution stopped",
       "event": "20"
-    },
-    {
-      "id": "revenue",
-      "status": "Awaiting human approval",
-      "event": "39"
     }
   ],
   "viewports": [
