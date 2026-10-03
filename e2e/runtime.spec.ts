@@ -1,9 +1,11 @@
 import { test, expect, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { statuses } from '../src/lessons/content';
 
 // Expected strings come from the lab's own canonical sources, never from prose
-// invented here: the manifest owns routes, titles and the evidence policy.
+// invented here: the manifest owns routes, titles and the evidence policy, and
+// the lesson copy owns the run-status wording the approval flow asserts on.
 const manifest = JSON.parse(
   readFileSync(fileURLToPath(new URL('../lab.manifest.json', import.meta.url)), 'utf8'),
 ) as {
@@ -213,4 +215,57 @@ test('each guide chapter names the scenarios that demonstrate it', async ({ page
   await dialog.locator('.chapter-coverage-scenarios button').first().click();
   await expect(page.getByRole('dialog')).toBeHidden();
   await expect(page.getByLabel('Scenario', { exact: true })).toHaveValue('revenue');
+});
+
+/** Runs the revenue scenario to the human gate and opens the review surface. */
+async function runToApproval(page: Page) {
+  await page.getByLabel('Playback pace').selectOption('Fast');
+  await page.getByRole('button', { name: 'Start run', exact: true }).click();
+  await expect(page.getByTestId('run-status')).toHaveText(
+    statuses.awaiting_approval.en,
+    { timeout: 30000 },
+  );
+  await page.getByRole('button', { name: 'Review action' }).first().click();
+  await expect(page.getByRole('dialog')).toBeVisible();
+}
+
+test('approving once writes exactly once and spends the one-use grant', async ({
+  page,
+}) => {
+  // The delegated authority before the write is the baseline that a one-use
+  // grant must consume without widening.
+  await page.goto(experiment('revenue').route);
+  const inspector = page.locator('.desktop-inspector');
+  await page.locator('#lens-sec').click();
+  const granted = (await inspector.locator('.permissions code').allInnerTexts()).join(
+    ',',
+  );
+  expect(granted).not.toBe('');
+
+  await runToApproval(page);
+  await page.getByRole('button', { name: 'Approve once' }).click();
+  await expect(page.getByTestId('run-status')).toHaveText(statuses.complete.en, {
+    timeout: 30000,
+  });
+
+  // Exactly one write, and the grant that permitted it is now spent.
+  await page.getByRole('button', { name: 'View report' }).click();
+  await expect(page.getByRole('dialog')).toContainText('Writes: 1');
+  await page.getByRole('button', { name: 'Close dialog' }).click();
+  await page.locator('#lens-sec').click();
+  await expect(inspector).toContainText(/approveOnce · consumed/);
+  // Approving must not have widened the base authority.
+  expect(
+    (await inspector.locator('.permissions code').allInnerTexts()).join(','),
+  ).toBe(granted);
+});
+
+test('denying leaves the simulated report unwritten', async ({ page }) => {
+  await page.goto(experiment('revenue').route);
+  await runToApproval(page);
+  await page.getByRole('button', { name: 'Deny action' }).click();
+  await expect(page.getByTestId('run-status')).toHaveText(statuses.denied.en);
+  // A refused write leaves the world resource exactly as it was.
+  await page.getByRole('button', { name: 'Inspect result' }).click();
+  await expect(page.getByRole('dialog')).toContainText('Writes: 0');
 });
